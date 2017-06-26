@@ -1,0 +1,10 @@
+all	: scltypes_float.gpp scltypes_float.ms scltypes_float.sun
+
+scltypes_float.gpp : scltypes_float.tpl
+	/bin/sh < ./scltypes_float.sh
+
+scltypes_float.ms : scltypes_float.tpl
+	/bin/sh < ./scltypes_float.sh
+
+scltypes_float.sun : scltypes_float.tpl
+	/bin/sh < ./scltypes_float.sh

@@ -1,0 +1,7 @@
+  param   thetamean   thetamode      sesand      sehess      seinfo
+      1     0.29622     0.29291                0.078327            
+      2     0.60829     0.94943                 0.42449            
+      3     0.08785     0.03692                0.048531            
+      4           1           1                       0            
+
+The log posterior (log prior - log likelihood) at the mode is     -4.8334.

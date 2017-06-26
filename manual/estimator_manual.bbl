@@ -1,0 +1,13 @@
+\begin{thebibliography}{1}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Gallant et~al.(2017)Gallant, Giacomini, and Ragusa]{GGR_2017}
+A.~Ronald Gallant, Raffaella Giacomini, and Giuseppe Ragusa.
+\newblock Bayesian estimation of state space models using moment conditions.
+\newblock \emph{Journal of Econometrics}, forthcoming, 2017.
+
+\end{thebibliography}
