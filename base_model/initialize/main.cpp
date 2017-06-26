@@ -65,6 +65,8 @@ namespace {
 
 int main(int argc, char** argp, char** envp){
 
+    stopwatch timer;
+
     istream* commandline_ptr;   // input parameter file name + prefix (after the executable)
     string pathname = string(PATHNAME) + string("/");
 
@@ -208,8 +210,11 @@ int main(int argc, char** argp, char** envp){
         realmat pi_sim;
         realmat reject;
 
-        for (INTEGER ifile = 0; ifile <= est_blk.num_mcmc_files; ++ifile) {
+        cout << "-----------------------------------------" << '\n';
 
+        for (INTEGER ifile = 0; ifile <= est_blk.num_mcmc_files; ++ifile) {
+            timer.reset();
+            cout << "This is the " << ifile + 1 << "th mcmc file from " << est_blk.num_mcmc_files + 1 << '\n';
             /*-----------------------------------------------------------------
               The mcmc:draw() function comunicates with PF in usermodel.likelihood()
                 - upon new proposal mcmc class tells usermodel the new and old theta's
@@ -236,9 +241,6 @@ int main(int argc, char** argp, char** envp){
             asymptotics.get_asymptotics(theta_mean, theta_mode, posterior_high, I, invJ, foc_hat, reps);
 
             usermodel.set_theta(theta_mode);
-            //realmat usr_stats;
-            //usermodel.get_stats(usr_stats);
-            //filename = "./result_files/" + prefix + ".diagnostics.dat";
 
             // This line writes the paramfile.alt, paramfile.fit and paramfile.end
             specification.write_params(paramfile, prefix, seed, theta, theta_mode, invJ/sample_size);
@@ -250,6 +252,8 @@ int main(int argc, char** argp, char** envp){
             output(est_blk, detail, ifile, prefix, theta_sim, stats_sim, pi_sim,
                    reject, theta_hat, V_hat, sample_size, theta_mean, theta_mode, posterior_high,
                    foc_hat, I, invJ, reps);
+
+            cout << "    Done! It took "<< timer.time() << " sec"<<'\n';
         }
 
         delete proposal_ptr;

@@ -1,0 +1,920 @@
+
+
+     **********************************************************************
+     *                                                                    *
+     *                        Input mle paramfile                         *
+     *                                                                    *
+     **********************************************************************
+
+PARAMFILE HISTORY (optional)
+#
+# This paramfile was written by bayes_gmm 1.0 using the following line from
+# control.dat, which was read as char*, char*
+# ---------------------------------------------------------------------------
+#      test.param.000                test
+# ---------------------------------------------------------------------------
+#
+ESTIMATION DESCRIPTION (required)
+        test   Project name, project_name, char*
+         1.0   bayes_gmm version, version, float
+           0   Proposal type, 0 group_move, 1 cond_move, 2 usr, proposaltype, int
+           1   Write detailed output if ask_print=1, ask_print, int
+  1741133992   Seed for MCMC draws, iseed, int
+        1000   Number of MCMC draws per output file, num_mcmc_draws, int
+           9   Number of MCMC output files beyond the first, num_mcmc_files, int
+        10.0   Rescale prop scale block by this, proposal_scale_factor, float
+         1.0   Rescale posterior by this val, temperature, float
+           1   Sandwich variance not computed if no_sandwich=1, no_sandwich, int
+           0   Number of lags in HAC middle of sandwich variance, lag_hac, int
+           5   The thinning parameter used to write MCMC draws, thin, int
+           0   Draw from prior if draw_from_prior=1, draw_from_prior, int
+DATA DESCRIPTION (required) (model constructor sees realmat data(M,sample_size))
+          12   Dimension of the data, M, int
+         200   Number of observations, sample_size, int
+data.dat       File name, any length, no embedded blanks, datafilename, string
+1:12           Read these white space separated var_cols, var_cols, intvec
+MODEL DESCRIPTION (required)
+          26   Number of model parameters, len_model_param, int
+           1   Number of model functionals, len_model_func, int
+MODEL PARAMFILE (required) (goes to usermodel as model_addlines)
+__none__       File name, use __none__ if none, model_paramfile, string
+#begin additional lines
+           2   Number of observable risk factors, numb_obs_factor, int
+           1   Lags for observable risk factors, lag_obs_factor, int
+           8   Number of log returns, numb_returns, int
+           1   Lags for HAC variance estimator (GMM objfun), lag_hac_gmm, int
+         500   Number of particles, N, int
+         100   Simulation size, len_simul, int
+          50   Draws between particle filter updates, particle_update, int
+#end additional lines
+PARAMETER START VALUES (required)
+   1.90970554334998099e-01    1         1  A11
+   3.24793056338963071e+00    1         2  A21
+   3.60281749990822575e-02    1         3  A12
+   8.48608238478818777e-02    1         4  A22
+   1.27430536311545150e-05    1         5  C11
+  -5.39388647701127891e-02    1         6  C21
+   0.00000000000000000e+00    0         7  C12
+   8.12984982955141516e-02    1         8  C22
+   7.83338456475358269e-01    1         9  rho
+   1.11091460806091841e-03    1        10  sigma
+   5.06353983984445255e-02    1        11  l_01
+   5.02787512926079552e-02    1        12  l_02
+  -4.52321110716730063e-02    1        13  l_03
+   0.00000000000000000e+00    0        14  l_y11
+   0.00000000000000000e+00    0        15  l_y12
+   0.00000000000000000e+00    0        16  l_y21
+   0.00000000000000000e+00    0        17  l_y22
+   0.00000000000000000e+00    0        18  l_y31
+   0.00000000000000000e+00    0        19  l_y32
+  -1.26571232391143023e-02    1        20  l_x1
+   1.36694054875987551e-03    1        21  l_x2
+   2.58258878327615009e-02    1        22  l_x3
+  -5.79415733608766303e-02    1        23  d_0
+   1.71223925075900986e-02    1        24  d_y1
+  -3.61636319597892081e-02    1        25  d_y2
+   1.95259213381359584e-02    1        26  d_x
+PROPOSAL SCALING (required)
+   3.12500000000000017e-03              1  A11
+   3.12500000000000017e-03              2  A21
+   3.12500000000000017e-03              3  A12
+   3.12500000000000017e-03              4  A22
+   3.12500000000000017e-05              5  C11
+   3.12500000000000017e-03              6  C21
+   3.12500000000000017e-03              7  C12
+   3.12500000000000017e-03              8  C22
+   3.12500000000000017e-03              9  rho
+   3.12500000000000007e-05             10  sigma
+   3.12500000000000017e-03             11  l_01
+   3.12500000000000017e-03             12  l_02
+   3.12500000000000017e-03             13  l_03
+   3.12500000000000017e-03             14  l_y11
+   3.12500000000000017e-03             15  l_y12
+   3.12500000000000017e-03             16  l_y21
+   3.12500000000000017e-03             17  l_y22
+   3.12500000000000017e-03             18  l_y31
+   3.12500000000000017e-03             19  l_y32
+   3.12500000000000017e-03             20  l_x1
+   3.12500000000000017e-03             21  l_x2
+   3.12500000000000017e-03             22  l_x3
+   3.12500000000000017e-03             23  d_0
+   3.12500000000000017e-03             24  d_y1
+   3.12500000000000017e-03             25  d_y2
+   3.12500000000000017e-03             26  d_x
+
+
+     **********************************************************************
+     *                                                                    *
+     *                    mle paramfile interpretation                    *
+     *                                                                    *
+     **********************************************************************
+
+
+ESTIMATION DESCRIPTION
+	 project_name =         test
+	 version = 1.0
+	 proposaltype = 0
+	 ask_print = true
+	 seed = 1741133992
+	 num_mcmc_draws = 1000
+	 num_mcmc_files = 9
+	 proposal_scale_factor = 10
+	 temperature = 1
+	 no_sandwich = true
+	 lag_hac = 0
+	 thin = 5
+	 draw_from_prior = false
+
+DATA DESCRIPTION
+	 M = 12
+	 sample_size = 200
+	 datafilename = data.dat
+	 var_cols_line: 1:12           Read these white space separated var_co
+	 var_cols:  1 2 3 4 5 6 7 8 9 10 11 12
+
+MODEL DESCRIPTION
+	 len_model_param = 26
+	 len_model_func = 1
+
+MODEL PARAMFILE
+	 is_model_paramfile = false
+#begin additional lines
+           2   Number of observable risk factors, numb_obs_factor, int
+           1   Lags for observable risk factors, lag_obs_factor, int
+           8   Number of log returns, numb_returns, int
+           1   Lags for HAC variance estimator (GMM objfun), lag_hac_gmm, int
+         500   Number of particles, N, int
+         100   Simulation size, len_simul, int
+          50   Draws between particle filter updates, particle_update, int
+#end additional lines
+
+PARAMETER START VALUES
+
+	 theta = 
+
+                                           Col  1
+
+                               Row  1     0.19097
+                               Row  2     3.24793
+                               Row  3    0.036028
+                               Row  4    0.084861
+                               Row  5  1.2743e-05
+                               Row  6   -0.053939
+                               Row  7         0.0
+                               Row  8    0.081298
+                               Row  9     0.78334
+                               Row 10  0.00111091
+                               Row 11    0.050635
+                               Row 12    0.050279
+                               Row 13   -0.045232
+                               Row 14         0.0
+                               Row 15         0.0
+                               Row 16         0.0
+                               Row 17         0.0
+                               Row 18         0.0
+                               Row 19         0.0
+                               Row 20   -0.012657
+                               Row 21  0.00136694
+                               Row 22    0.025826
+                               Row 23   -0.057942
+                               Row 24    0.017122
+                               Row 25   -0.036164
+                               Row 26    0.019526
+
+	 theta_fixed = 
+                                   Row  1   1
+                                   Row  2   1
+                                   Row  3   1
+                                   Row  4   1
+                                   Row  5   1
+                                   Row  6   1
+                                   Row  7   0
+                                   Row  8   1
+                                   Row  9   1
+                                   Row 10   1
+                                   Row 11   1
+                                   Row 12   1
+                                   Row 13   1
+                                   Row 14   0
+                                   Row 15   0
+                                   Row 16   0
+                                   Row 17   0
+                                   Row 18   0
+                                   Row 19   0
+                                   Row 20   1
+                                   Row 21   1
+                                   Row 22   1
+                                   Row 23   1
+                                   Row 24   1
+                                   Row 25   1
+                                   Row 26   1
+
+	 Number fixed = 7
+	 Number active = 19
+
+	 fixed = 
+                                   Row 1    7
+                                   Row 2   14
+                                   Row 3   15
+                                   Row 4   16
+                                   Row 5   17
+                                   Row 6   18
+                                   Row 7   19
+
+
+	 active = 
+                                   Row  1    1
+                                   Row  2    2
+                                   Row  3    3
+                                   Row  4    4
+                                   Row  5    5
+                                   Row  6    6
+                                   Row  7    8
+                                   Row  8    9
+                                   Row  9   10
+                                   Row 10   11
+                                   Row 11   12
+                                   Row 12   13
+                                   Row 13   20
+                                   Row 14   21
+                                   Row 15   22
+                                   Row 16   23
+                                   Row 17   24
+                                   Row 18   25
+                                   Row 19   26
+
+
+PROPOSAL SCALING
+(after multiplication by proposal_scale_factor)
+(output paramfile this scale and proposal_scale_factor=1.0)
+
+	 proposal_scale = 
+
+                                           Col  1
+
+                               Row  1    0.031250
+                               Row  2    0.031250
+                               Row  3    0.031250
+                               Row  4    0.031250
+                               Row  5  0.00031250
+                               Row  6    0.031250
+                               Row  7    0.031250
+                               Row  8    0.031250
+                               Row  9    0.031250
+                               Row 10  0.00031250
+                               Row 11    0.031250
+                               Row 12    0.031250
+                               Row 13    0.031250
+                               Row 14    0.031250
+                               Row 15    0.031250
+                               Row 16    0.031250
+                               Row 17    0.031250
+                               Row 18    0.031250
+                               Row 19    0.031250
+                               Row 20    0.031250
+                               Row 21    0.031250
+                               Row 22    0.031250
+                               Row 23    0.031250
+                               Row 24    0.031250
+                               Row 25    0.031250
+                               Row 26    0.031250
+
+
+     **********************************************************************
+     *                                                                    *
+     *                            Prop groups                             *
+     *                                                                    *
+     **********************************************************************
+
+		 Constructed from PROPOSAL GROUPING, if present; 
+		 If not, move one at a time grouping is used.
+		 If theta has fixed elements, they are in Group 0
+		 and not changed during the MCMC iterations.
+		 PROPOSAL GROUPING correlations have been converted
+		 to variances using the proposal_scale vector above.
+		 Frequencies are relative, not absolute.
+
+     Group           0
+
+	 freq =            0
+	 group_index_vec = 
+                                   Row 1    7
+                                   Row 2   14
+                                   Row 3   15
+                                   Row 4   16
+                                   Row 5   17
+                                   Row 6   18
+                                   Row 7   19
+
+	 group_increment = 
+
+                                           Col  1
+
+                               Row  1         0.0
+                               Row  2         0.0
+                               Row  3         0.0
+                               Row  4         0.0
+                               Row  5         0.0
+                               Row  6         0.0
+                               Row  7         0.0
+
+	 proposal_mean =   
+
+                                           Col  1
+
+                               Row  1         0.0
+                               Row  2         0.0
+                               Row  3         0.0
+                               Row  4         0.0
+                               Row  5         0.0
+                               Row  6         0.0
+                               Row  7         0.0
+
+	 proposal_cov =    
+
+             Col  1      Col  2      Col  3      Col  4      Col  5      Col  6
+
+ Row  1  0.00097656         0.0         0.0         0.0         0.0         0.0
+ Row  2         0.0  0.00097656         0.0         0.0         0.0         0.0
+ Row  3         0.0         0.0  0.00097656         0.0         0.0         0.0
+ Row  4         0.0         0.0         0.0  0.00097656         0.0         0.0
+ Row  5         0.0         0.0         0.0         0.0  0.00097656         0.0
+ Row  6         0.0         0.0         0.0         0.0         0.0  0.00097656
+ Row  7         0.0         0.0         0.0         0.0         0.0         0.0
+
+
+             Col  7
+
+ Row  1         0.0
+ Row  2         0.0
+ Row  3         0.0
+ Row  4         0.0
+ Row  5         0.0
+ Row  6         0.0
+ Row  7  0.00097656
+
+     Group           1
+
+	 freq =            1
+	 group_index_vec = 
+                                    Row 1   1
+
+	 group_increment = 
+
+                                           Col  1
+
+                               Row  1         0.0
+
+	 proposal_mean =   
+
+                                           Col  1
+
+                               Row  1     0.19097
+
+	 proposal_cov =    
+
+                                           Col  1
+
+                               Row  1  0.00097656
+
+     Group           2
+
+	 freq =            1
+	 group_index_vec = 
+                                    Row 1   2
+
+	 group_increment = 
+
+                                           Col  1
+
+                               Row  1         0.0
+
+	 proposal_mean =   
+
+                                           Col  1
+
+                               Row  1     3.24793
+
+	 proposal_cov =    
+
+                                           Col  1
+
+                               Row  1  0.00097656
+
+     Group           3
+
+	 freq =            1
+	 group_index_vec = 
+                                    Row 1   3
+
+	 group_increment = 
+
+                                           Col  1
+
+                               Row  1         0.0
+
+	 proposal_mean =   
+
+                                           Col  1
+
+                               Row  1    0.036028
+
+	 proposal_cov =    
+
+                                           Col  1
+
+                               Row  1  0.00097656
+
+     Group           4
+
+	 freq =            1
+	 group_index_vec = 
+                                    Row 1   4
+
+	 group_increment = 
+
+                                           Col  1
+
+                               Row  1         0.0
+
+	 proposal_mean =   
+
+                                           Col  1
+
+                               Row  1    0.084861
+
+	 proposal_cov =    
+
+                                           Col  1
+
+                               Row  1  0.00097656
+
+     Group           5
+
+	 freq =            1
+	 group_index_vec = 
+                                    Row 1   5
+
+	 group_increment = 
+
+                                           Col  1
+
+                               Row  1         0.0
+
+	 proposal_mean =   
+
+                                           Col  1
+
+                               Row  1  1.2743e-05
+
+	 proposal_cov =    
+
+                                           Col  1
+
+                               Row  1  9.7656e-08
+
+     Group           6
+
+	 freq =            1
+	 group_index_vec = 
+                                    Row 1   6
+
+	 group_increment = 
+
+                                           Col  1
+
+                               Row  1         0.0
+
+	 proposal_mean =   
+
+                                           Col  1
+
+                               Row  1   -0.053939
+
+	 proposal_cov =    
+
+                                           Col  1
+
+                               Row  1  0.00097656
+
+     Group           7
+
+	 freq =            1
+	 group_index_vec = 
+                                    Row 1   8
+
+	 group_increment = 
+
+                                           Col  1
+
+                               Row  1         0.0
+
+	 proposal_mean =   
+
+                                           Col  1
+
+                               Row  1    0.081298
+
+	 proposal_cov =    
+
+                                           Col  1
+
+                               Row  1  0.00097656
+
+     Group           8
+
+	 freq =            1
+	 group_index_vec = 
+                                    Row 1   9
+
+	 group_increment = 
+
+                                           Col  1
+
+                               Row  1         0.0
+
+	 proposal_mean =   
+
+                                           Col  1
+
+                               Row  1     0.78334
+
+	 proposal_cov =    
+
+                                           Col  1
+
+                               Row  1  0.00097656
+
+     Group           9
+
+	 freq =            1
+	 group_index_vec = 
+                                   Row 1   10
+
+	 group_increment = 
+
+                                           Col  1
+
+                               Row  1         0.0
+
+	 proposal_mean =   
+
+                                           Col  1
+
+                               Row  1  0.00111091
+
+	 proposal_cov =    
+
+                                           Col  1
+
+                               Row  1  9.7656e-08
+
+     Group           10
+
+	 freq =            1
+	 group_index_vec = 
+                                   Row 1   11
+
+	 group_increment = 
+
+                                           Col  1
+
+                               Row  1         0.0
+
+	 proposal_mean =   
+
+                                           Col  1
+
+                               Row  1    0.050635
+
+	 proposal_cov =    
+
+                                           Col  1
+
+                               Row  1  0.00097656
+
+     Group           11
+
+	 freq =            1
+	 group_index_vec = 
+                                   Row 1   12
+
+	 group_increment = 
+
+                                           Col  1
+
+                               Row  1         0.0
+
+	 proposal_mean =   
+
+                                           Col  1
+
+                               Row  1    0.050279
+
+	 proposal_cov =    
+
+                                           Col  1
+
+                               Row  1  0.00097656
+
+     Group           12
+
+	 freq =            1
+	 group_index_vec = 
+                                   Row 1   13
+
+	 group_increment = 
+
+                                           Col  1
+
+                               Row  1         0.0
+
+	 proposal_mean =   
+
+                                           Col  1
+
+                               Row  1   -0.045232
+
+	 proposal_cov =    
+
+                                           Col  1
+
+                               Row  1  0.00097656
+
+     Group           13
+
+	 freq =            1
+	 group_index_vec = 
+                                   Row 1   20
+
+	 group_increment = 
+
+                                           Col  1
+
+                               Row  1         0.0
+
+	 proposal_mean =   
+
+                                           Col  1
+
+                               Row  1   -0.012657
+
+	 proposal_cov =    
+
+                                           Col  1
+
+                               Row  1  0.00097656
+
+     Group           14
+
+	 freq =            1
+	 group_index_vec = 
+                                   Row 1   21
+
+	 group_increment = 
+
+                                           Col  1
+
+                               Row  1         0.0
+
+	 proposal_mean =   
+
+                                           Col  1
+
+                               Row  1  0.00136694
+
+	 proposal_cov =    
+
+                                           Col  1
+
+                               Row  1  0.00097656
+
+     Group           15
+
+	 freq =            1
+	 group_index_vec = 
+                                   Row 1   22
+
+	 group_increment = 
+
+                                           Col  1
+
+                               Row  1         0.0
+
+	 proposal_mean =   
+
+                                           Col  1
+
+                               Row  1    0.025826
+
+	 proposal_cov =    
+
+                                           Col  1
+
+                               Row  1  0.00097656
+
+     Group           16
+
+	 freq =            1
+	 group_index_vec = 
+                                   Row 1   23
+
+	 group_increment = 
+
+                                           Col  1
+
+                               Row  1         0.0
+
+	 proposal_mean =   
+
+                                           Col  1
+
+                               Row  1   -0.057942
+
+	 proposal_cov =    
+
+                                           Col  1
+
+                               Row  1  0.00097656
+
+     Group           17
+
+	 freq =            1
+	 group_index_vec = 
+                                   Row 1   24
+
+	 group_increment = 
+
+                                           Col  1
+
+                               Row  1         0.0
+
+	 proposal_mean =   
+
+                                           Col  1
+
+                               Row  1    0.017122
+
+	 proposal_cov =    
+
+                                           Col  1
+
+                               Row  1  0.00097656
+
+     Group           18
+
+	 freq =            1
+	 group_index_vec = 
+                                   Row 1   25
+
+	 group_increment = 
+
+                                           Col  1
+
+                               Row  1         0.0
+
+	 proposal_mean =   
+
+                                           Col  1
+
+                               Row  1   -0.036164
+
+	 proposal_cov =    
+
+                                           Col  1
+
+                               Row  1  0.00097656
+
+     Group           19
+
+	 freq =            1
+	 group_index_vec = 
+                                   Row 1   26
+
+	 group_increment = 
+
+                                           Col  1
+
+                               Row  1         0.0
+
+	 proposal_mean =   
+
+                                           Col  1
+
+                               Row  1    0.019526
+
+	 proposal_cov =    
+
+                                           Col  1
+
+                               Row  1  0.00097656
+
+
+
+     **********************************************************************
+     *                                                                    *
+     *                       First 12 observations                        *
+     *                                                                    *
+     **********************************************************************
+
+
+             Col  1      Col  2      Col  3      Col  4      Col  5      Col  6
+
+ Row  1  0.00420790 -0.00190268 -0.00041614  0.00268877 -0.00218712   -0.017011
+ Row  2    0.027879 -0.00118658   -0.021299    0.025006    0.049829   -0.055151
+ Row  3 -0.00461741  0.00420790 -0.00190268 -0.00041614  0.00268877 -0.00218712
+ Row  4  0.00305297    0.027879 -0.00118658   -0.021299    0.025006    0.049829
+ Row  5    0.016179    0.012225    0.011957    0.015046    0.016991    0.011041
+ Row  6  0.00953623  0.00352751  0.00363139  0.00786734  0.00913368 -8.6313e-05
+ Row  7   -0.037038   -0.023174   -0.024513   -0.033343   -0.033448   -0.011976
+ Row  8 -0.00632720 -0.00868679 -0.00904147 -0.00702262 -0.00520898 -0.00868919
+ Row  9   -0.030339   -0.025062   -0.025075   -0.028857   -0.030071   -0.021965
+ Row 10   -0.057038   -0.043174   -0.044513   -0.053343   -0.053448   -0.031976
+ Row 11    0.036484    0.034195    0.034026    0.035831    0.037088    0.033668
+ Row 12  0.00337408  0.00239966  0.00213636  0.00307123  0.00413476  0.00272209
+
+
+             Col  7      Col  8      Col  9      Col 10      Col 11      Col 12
+
+ Row  1 -0.00988445 -0.00505480 -0.00504204 -0.00387379  0.00055109 -0.00344299
+ Row  2   -0.075185   -0.075704   -0.016718   -0.040296   -0.054178 -0.00384164
+ Row  3   -0.017011 -0.00988445 -0.00505480 -0.00504204 -0.00387379  0.00055109
+ Row  4   -0.055151   -0.075185   -0.075704   -0.016718   -0.040296   -0.054178
+ Row  5    0.013163    0.012511    0.013642    0.011510    0.013285    0.015503
+ Row  6  0.00317603  0.00088937  0.00518378  0.00273511  0.00109099  0.00459977
+ Row  7   -0.021754   -0.017861   -0.026653   -0.022126   -0.018768   -0.024321
+ Row  8 -0.00742155 -0.00728246 -0.00764478 -0.00922412 -0.00642684 -0.00517879
+ Row  9   -0.024407   -0.021795   -0.026453   -0.024292   -0.021633   -0.025240
+ Row 10   -0.041754   -0.037861   -0.046653   -0.042126   -0.038768   -0.044321
+ Row 11    0.035111    0.035189    0.035103    0.033788    0.035920    0.036915
+ Row 12  0.00304647  0.00303408  0.00287994  0.00209763  0.00338752  0.00412067
+
+
+     **********************************************************************
+     *                                                                    *
+     *                        Last 12 observations                        *
+     *                                                                    *
+     **********************************************************************
+
+
+             Col  1      Col  2      Col  3      Col  4      Col  5      Col  6
+
+ Row  1  0.00189085  0.00530232  0.00362029 -0.00094700  0.00244244  0.00151945
+ Row  2 -0.00982868    0.097878   -0.019842    0.080173   -0.050903  0.00435809
+ Row  3  0.00310479  0.00189085  0.00530232  0.00362029 -0.00094700  0.00244244
+ Row  4    0.045245 -0.00982868    0.097878   -0.019842    0.080173   -0.050903
+ Row  5    0.012972    0.018149    0.011359    0.017909    0.012460    0.013134
+ Row  6  0.00307347    0.014419  0.00127812    0.011967  0.00025877  0.00488418
+ Row  7   -0.022723   -0.046987   -0.019453   -0.039920   -0.016823   -0.027292
+ Row  8 -0.00760103 -0.00591640 -0.00881898 -0.00523707 -0.00708872 -0.00812621
+ Row  9   -0.024134   -0.035373   -0.022560   -0.032947   -0.021017   -0.026057
+ Row 10   -0.042723   -0.066987   -0.039453   -0.059920   -0.036823   -0.047292
+ Row 11    0.035076    0.037031    0.034069    0.037261    0.035336    0.034827
+ Row 12  0.00285904  0.00358406  0.00225332  0.00407155  0.00309956  0.00254553
+
+
+             Col  7      Col  8      Col  9      Col 10      Col 11      Col 12
+
+ Row  1  0.00538786  0.00790055 -0.00817218 -0.00730462 -0.00546522  0.00466615
+ Row  2 -0.00162255    0.031856    0.051444   -0.060246   -0.028149    0.062414
+ Row  3  0.00151945  0.00538786  0.00790055 -0.00817218 -0.00730462 -0.00546522
+ Row  4  0.00435809 -0.00162255    0.031856    0.051444   -0.060246   -0.028149
+ Row  5    0.012733    0.014652    0.013177    0.012171    0.013748    0.018403
+ Row  6  0.00456725  0.00669063  0.00743028  0.00158486  0.00475121    0.013339
+ Row  7   -0.027483   -0.031743   -0.029585   -0.018072   -0.025561   -0.044861
+ Row  8 -0.00847526 -0.00701836 -0.00911994 -0.00798022 -0.00734524 -0.00517662
+ Row  9   -0.025678   -0.027459   -0.029629   -0.022990   -0.025936   -0.033972
+ Row 10   -0.047483   -0.051743   -0.049585   -0.038072   -0.045561   -0.064861
+ Row 11    0.034615    0.035856    0.033887    0.034557    0.035300    0.037573
+ Row 12  0.00230875  0.00299807  0.00235070  0.00282005  0.00303553  0.00391592
+
+
+     **********************************************************************
+     *                                                                    *
+     *              Begin usermodel_class constructor output              *
+     *                                                                    *
+     **********************************************************************
+
+	 PWD in pathname.h is:/home/szokeb/Dropbox/git_repos/bayes_gmm/sdf_example/
+
+	        len_theta = 26
+	        len_stats = 1
+	  numb_obs_factor = 2
+	   lag_obs_factor = 1
+	     numb_returns = 8
+	      lag_hac_gmm = 1
+	                N = 500
+	        len_simul = 100
+	  particle_update = 50
+
+
+	 moment_cond, gmm_objfun, and model successfully instantiated
+	 draws, smooth, filter successfully instantiated with size 500
+
+
+     **********************************************************************
+     *                                                                    *
+     *               End usermodel_class constructor output               *
+     *                                                                    *
+     **********************************************************************
+

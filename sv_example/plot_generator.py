@@ -18,7 +18,7 @@ sns_colors = sns.color_palette()
 
 # Extra parameters
 folder = './result_files/'
-paramfile = './svsim.param.default'
+paramfile = './svsim.param.000'
 burnin = 0
 second_thinning = 1
 
@@ -31,12 +31,12 @@ second_thinning = 1
 params = open(paramfile)
 
 InputParams = {}
-ThetaParams = {}            
+ThetaParams = {}
 
 for row in params:
     if row[:22] == 'PARAMETER START VALUES':
         break
-        
+
     if (row[0] != '#') and not (row[:3].isupper()):
         param_type = row.split(',')[-1].strip()
         if param_type == 'char*' or param_type=='string':
@@ -46,9 +46,14 @@ for row in params:
         if param_type == 'float':
             InputParams[row.split(',')[-2][1:]] = float(row[:12].replace(' ',''))
         if param_type == 'intvec':
-            var_cols = np.asarray([int(i) for i in row[:12].split(' ') if i!=''])
-            InputParams[row.split(',')[-2][1:]] = var_cols
-            
+            if row[1]==':':
+                InputParams[row.split(',')[-2][1:]] = np.asarray([1])
+            else:
+                var_cols = np.asarray([int(i) for i in row[:12].split(' ') if i!=''])
+                InputParams[row.split(',')[-2][1:]] = var_cols
+#            var_cols = np.asarray([int(i) for i in row[:12].split(' ') if i!=''])
+#            InputParams[row.split(',')[-2][1:]] = var_cols
+
 for row in params:
     if not (row[:3].isupper()):
         par = row.rsplit(' ', maxsplit=1)[-1].strip()
@@ -59,7 +64,7 @@ for row in params:
         ThetaParams[par] = ThetaParams[par] + [int(number)]
     else:
         break
-        
+
 for row in params:
     if not (row[:3].isupper()):
         par = row.rsplit(' ', maxsplit=1)[-1].strip()
@@ -92,7 +97,7 @@ model_params['rank'] = model_params['rank'].astype(int)
 
 
 # ------------------------
-# 
+#
 # ## Summary
 
 # In[5]:
@@ -128,7 +133,7 @@ summary_file.write(title_string)
 
 for row in summary:
     summary_file.write(row)
-    
+
 df_summary = pd.DataFrame(data = Summary)
 df_summary = df_summary.rename(columns={'param':'rank'})
 df_summary['rank'] = df_summary['rank'].astype(int)
@@ -160,7 +165,7 @@ for i in range(InputParams['num_mcmc_files'] + 1):
     dim = np.asarray(file[:2], dtype=int).squeeze()
     reject_draws += np.asarray(file[2:]).reshape(dim[1], dim[0]).T[:, -2:]
 
-second_col = np.asarray([i/reject_draws[-1,-1] 
+second_col = np.asarray([i/reject_draws[-1,-1]
                          for i in reject_draws[:, -1]]).reshape(InputParams['len_model_param'] + 1, 1)
 first_col = []
 for i in range(InputParams['len_model_param'] + 1):
@@ -169,14 +174,14 @@ for i in range(InputParams['len_model_param'] + 1):
     else:
         first_col.append(0.0)
 
-first_col = np.asarray(first_col).reshape(InputParams['len_model_param'] + 1, 1)        
+first_col = np.asarray(first_col).reshape(InputParams['len_model_param'] + 1, 1)
 reject_draws = np.hstack([first_col, second_col, reject_draws])
 
-rejection_table = pd.DataFrame(data=reject_draws, columns=['rejection_rate', 'freq_move', 
+rejection_table = pd.DataFrame(data=reject_draws, columns=['rejection_rate', 'freq_move',
                                                            'numb_rejection', 'numb_moves'])
 
 
-pp = pd.concat([model_params[['rank', 'params']], 
+pp = pd.concat([model_params[['rank', 'params']],
                 pd.DataFrame(data={'rank': [5, 6], 'params':['Total', '7']})]).iloc[:-1,:]
 pp.reset_index()
 
@@ -258,7 +263,7 @@ for i, val in enumerate(list_active):
     ax[i].set_title(val, fontsize=14, loc='left')
     ax[i].axhline(0, color='k')
     ax[i].set_ylim([-.3, 1])
-    
+
 fig.suptitle('MCMC chain, autocorrelation', fontsize=16)
 plt.tight_layout()
 plt.savefig(folder + 'figures/fig2.png')
@@ -288,20 +293,20 @@ plt.savefig(folder + 'figures/fig3.png')
 gibbs_draws = pd.DataFrame(data =[])
 
 for i in range(InputParams['num_mcmc_files'] + 1):
-    file = pd.read_csv(folder + InputParams['project_name'] + 
+    file = pd.read_csv(folder + InputParams['project_name'] +
                        '.usrvar.gibbs_draws.00{}.dat'.format(i), header=None)
     dim = np.asarray(file[:2], dtype=int).squeeze()
-    gibbs_draws = pd.concat([gibbs_draws, 
+    gibbs_draws = pd.concat([gibbs_draws,
                                  pd.DataFrame(data=np.asarray(file[2:]).reshape(dim[1], dim[0]))], axis=0)
 
 gibbs_draws.index = range(gibbs_draws.shape[0])
 gibbs_draws.columns = list_all
 
 fig, ax = plt.subplots(numb_active, 1, figsize=(13, 2.5*numb_active))
-for i, val in enumerate(list_active): 
+for i, val in enumerate(list_active):
     gibbs_draws.iloc[:, :][val].plot(ax=ax[i])
     ax[i].set_title(val, fontsize=14, loc='left')
-    
+
 plt.suptitle('MCMC chain of theta at PF updates', y=1.0, fontsize=16)
 plt.tight_layout()
 plt.savefig(folder + 'figures/fig4.png')
@@ -321,7 +326,7 @@ pi_draws = pd.DataFrame(data =[])
 for i in range(InputParams['num_mcmc_files'] + 1):
     file = pd.read_csv(folder + InputParams['project_name'] + '.pi.00{}.dat'.format(i), header=None)
     dim = np.asarray(file[:2], dtype=int).squeeze()
-    pi_draws = pd.concat([pi_draws, 
+    pi_draws = pd.concat([pi_draws,
                           pd.DataFrame(data=np.asarray(file[2:]).reshape(dim[1], dim[0]))], axis=0)
 
 pi_draws.index = range(num_draws)
@@ -345,7 +350,7 @@ plt.savefig(folder + 'figures/fig5.png')
 
 fig, ax = plt.subplots(figsize=(12, 4))
 
-particle_filter = pd.read_csv(folder + 'svsim.usrvar.filter.000.dat')
+particle_filter = pd.read_csv(folder + InputParams['project_name'] + '.usrvar.filter.000.dat')
 particle_filter.iloc[:, [-2, 0]].plot(ax=ax)
 (particle_filter.iloc[:, 0] + 2*particle_filter.iloc[:, 1]).plot(ax=ax, linestyle='--', color=[sns_colors[1]])
 (particle_filter.iloc[:, 0] - 2*particle_filter.iloc[:, 1]).plot(ax=ax, linestyle='--', color=[sns_colors[1]])
@@ -359,7 +364,7 @@ plt.savefig(folder + 'figures/fig6.png')
 
 fig, ax = plt.subplots(figsize=(12, 4))
 
-particle_filter = pd.read_csv(folder + 'svsim.usrvar.filter.000.dat')
+particle_filter = pd.read_csv(folder + InputParams['project_name'] + '.usrvar.filter.000.dat')
 particle_filter.iloc[:, [-2, 2]].plot(ax=ax)
 (particle_filter.iloc[:, 2] + 2*particle_filter.iloc[:, 3]).plot(ax=ax, linestyle='--', color=[sns_colors[1]])
 (particle_filter.iloc[:, 2] - 2*particle_filter.iloc[:, 3]).plot(ax=ax, linestyle='--', color=[sns_colors[1]])
@@ -412,7 +417,7 @@ plt.savefig(folder + 'figures/fig9.png')
 
 sample_size = InputParams['sample_size']
 data = pd.read_csv('./data/data.dat', sep='\s+', header=None)
-data.columns = ['y', 'x']
+#data.columns = ['y', 'x']
 data = data[:sample_size]
 
 fig, ax = plt.subplots(figsize=(12, 4))
@@ -423,6 +428,3 @@ plt.savefig(folder + 'figures/fig10.png')
 
 
 # In[ ]:
-
-
-

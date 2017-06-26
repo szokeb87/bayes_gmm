@@ -7,9 +7,10 @@ USRSRC    = ./usermodel
 CXXFLAGS  = -O2 -Wall -c -I$(INITSRC) -I$(USRSRC) -I$(ESTSRC) -I$(ISCL)
 LDFLAGS   = -L$(LSCL) -lscl -lm
 
-HEADERS  = $(ESTSRC)/estimator.h $(ESTSRC)/estimator_base.h $(INITSRC)/initialize.h \
-	$(ISCL)/libscl.h $(INITSRC)/pathname.h \
-	$(USRSRC)/usermodel.h $(USRSRC)/sv_moments.h $(USRSRC)/sv_model.h
+HEADERS  = $(ESTSRC)/estimator.h $(ESTSRC)/estimator_base.h \
+	$(INITSRC)/initialize.h $(INITSRC)/pathname.h \
+	$(ISCL)/libscl.h \
+	$(USRSRC)/usermodel.h $(USRSRC)/sv_moments.h $(USRSRC)/sv_model.h $(USRSRC)/sv_params.h
 
 OBJECTS = initialize.o mcmc_class.o proposal.o asymptotics.o \
 	usermodel.o sv_moments.o sv_model.o
