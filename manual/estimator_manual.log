@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015) (preloaded format=pdflatex 2016.2.1)  25 JUN 2017 23:00
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015) (preloaded format=pdflatex 2016.2.1)  26 JUN 2017 22:13
 entering extended mode
  \write18 enabled.
  %&-line parsing enabled.
@@ -677,13 +677,13 @@ File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 ) [1
 
 {/usr/local/texlive/2015/texmf-var/fonts/map/pdftex/updmap/pdftex.map}]
-LaTeX Font Info:    Try loading font information for OMS+cmr on input line 98.
+LaTeX Font Info:    Try loading font information for OMS+cmr on input line 99.
 
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/omscmr.fd
 File: omscmr.fd 2014/09/29 v2.5h Standard LaTeX font definitions
 )
 LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <10.95> not available
-(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 98.
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 99.
  [2] [3] [4]
 [5] [6]
 Overfull \hbox (35.40015pt too wide) in paragraph at lines 252--253
@@ -693,110 +693,113 @@ rmodel[]class::support \OT1/cmr/m/n/10.95 must re-turn \OT1/cmtt/m/n/10.95 true
  []
 
 [7] [8]
+LaTeX Font Info:    Font shape `OT1/cmtt/bx/n' in size <12> not available
+(Font)              Font shape `OT1/cmtt/m/n' tried instead on input line 292.
+ [9] [10]
 LaTeX Font Info:    Font shape `OT1/cmtt/bx/n' in size <14.4> not available
-(Font)              Font shape `OT1/cmtt/m/n' tried instead on input line 289.
-
-Overfull \hbox (5.85287pt too wide) in paragraph at lines 292--293
+(Font)              Font shape `OT1/cmtt/m/n' tried instead on input line 361.
+ [11] [12]
+Overfull \hbox (5.85287pt too wide) in paragraph at lines 451--452
 []\OT1/cmr/m/n/10.95 The \OT1/cmtt/m/n/10.95 main \OT1/cmr/m/n/10.95 is called 
 with com-mand ar-gu-ments with pos-si-bly mul-ti-ple rows, e.g. the file \OT1/c
 mtt/m/n/10.95 control.dat
  []
 
 
-Overfull \hbox (35.6641pt too wide) in paragraph at lines 299--301
+Overfull \hbox (35.6641pt too wide) in paragraph at lines 458--460
 \OT1/cmr/m/n/10.95 them into \OT1/cmtt/m/n/10.95 specification.set[]params()\OT
 1/cmr/m/n/10.95 . This ini-tial-izes the pri-vate mem-bers of \OT1/cmtt/m/n/10.
 95 specification[]class 
  []
 
 
-Overfull \hbox (1.82622pt too wide) in paragraph at lines 331--333
+Overfull \hbox (1.82622pt too wide) in paragraph at lines 490--492
 []\OT1/cmr/m/n/10.95 initialize \OT1/cmtt/m/n/10.95 gmm[]objfun$\OT1/cmr/m/n/10
 .95 =$\OT1/cmtt/m/n/10.95 gmm(moment[]cond, lag[]gmm, &data, data.ncol(), lag[]
 hac[]gmm)
  []
 
 
-Overfull \hbox (10.8351pt too wide) in paragraph at lines 333--334
+Overfull \hbox (10.8351pt too wide) in paragraph at lines 492--493
 \OT1/cmtt/m/n/10.95 Lhac(lag[]hac[]gmm), correct[]for[]mean(true), regularize[]
 W(false), ridge(0.0),
  []
 
-[9]
-Overfull \hbox (8.50793pt too wide) in paragraph at lines 362--364
+[13]
+Overfull \hbox (8.50793pt too wide) in paragraph at lines 521--523
 []\OT1/cmr/m/n/10.95 default: \OT1/cmtt/m/n/10.95 proposal(proposal), usermodel
 (usermodel), simulation[]size(1), thin(1), 
  []
 
 
-Overfull \hbox (7.85367pt too wide) in paragraph at lines 378--380
+Overfull \hbox (7.85367pt too wide) in paragraph at lines 537--539
 []\OT1/cmr/m/n/10.95 Define \OT1/cmtt/m/n/10.95 realmat theta = specification.g
 et[]theta(); \OT1/cmr/m/n/10.95 and \OT1/cmtt/m/n/10.95 INT[]32BIT seed = est[]
 blk.seed; 
  []
 
-[10]
-Underfull \hbox (badness 10000) in paragraph at lines 391--392
+[14]
+Underfull \hbox (badness 10000) in paragraph at lines 550--551
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 395--396
+Underfull \hbox (badness 10000) in paragraph at lines 554--555
 
  []
 
 
-Overfull \hbox (13.08447pt too wide) in paragraph at lines 418--419
+Overfull \hbox (13.08447pt too wide) in paragraph at lines 577--578
 []\OT1/cmr/m/n/10.95 last sim-u-lated value be-comes \OT1/cmtt/m/n/10.95 theta[
 ]start\OT1/cmr/m/n/10.95 , so we can use that again in the \OT1/cmtt/m/n/10.95 
 num[]mcmc[]files
  []
 
 
-Overfull \hbox (29.63202pt too wide) in paragraph at lines 423--424
+Overfull \hbox (29.63202pt too wide) in paragraph at lines 582--583
 []\OT1/cmr/m/n/10.95 taking \OT1/cmtt/m/n/10.95 theta[]sum\OT1/cmr/m/n/10.95 , 
 this up-dates asymp-totics' \OT1/cmtt/m/n/10.95 mean\OT1/cmr/m/n/10.95 , \OT1/c
 mtt/m/n/10.95 posterior[]mode, cov, cum[]sample[]size
  []
 
 
-Overfull \hbox (15.0281pt too wide) in paragraph at lines 432--433
+Overfull \hbox (15.0281pt too wide) in paragraph at lines 591--592
 []\OT1/cmr/m/n/10.95 assigns \OT1/cmtt/m/n/10.95 mean, posterior[]mode, posteri
 or[]maxval, I = null; invJ = cov; foc[]hat
  []
 
-[11]
-Overfull \hbox (9.08762pt too wide) in paragraph at lines 440--441
+[15]
+Overfull \hbox (9.08762pt too wide) in paragraph at lines 599--600
 []\OT1/cmtt/m/n/10.95 specification.write[]params(paramfile, prefix, seed, thet
 a, theta[]mode, invJ/T) 
  []
 
-[12] [13] [14] [15] [16] [17]
-Overfull \hbox (16.36356pt too wide) in paragraph at lines 636--637
+[16] [17]
+Overfull \hbox (16.36356pt too wide) in paragraph at lines 639--640
 []\OT1/cmr/m/n/10.95 after \OT1/cmtt/m/n/10.95 num[]mcmc[]draws \OT1/cmr/m/n/10
 .95 many draws the mcmc ver-sions are passed to asymp-totics $=\OML/cmm/m/it/10
 .95 >$ \OT1/cmtt/m/n/10.95 theta[]mode
  []
 
 [18] (./estimator_manual.bbl)
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 648.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 651.
  [19]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 648.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 651.
  (./estimator_manual.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 648.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 648.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 651.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 651.
 Package rerunfilecheck Info: File `estimator_manual.out' has not changed.
-(rerunfilecheck)             Checksum: B9346BE91F9DCB768DE1D3EEEAE8C660;844.
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 648.
+(rerunfilecheck)             Checksum: 5017F1368D40D0043F3DB7D5722F410C;965.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 651.
  ) 
 Here is how much of TeX's memory you used:
- 8219 strings out of 493089
- 118734 string characters out of 6134849
+ 8225 strings out of 493089
+ 118817 string characters out of 6134849
  323399 words of memory out of 5000000
- 11513 multiletter control sequences out of 15000+600000
- 15013 words of font info for 58 fonts, out of 8000000 for 9000
+ 11517 multiletter control sequences out of 15000+600000
+ 15182 words of font info for 59 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 29i,18n,35p,1379b,717s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 29i,18n,35p,1379b,719s stack positions out of 5000i,500n,10000p,200000b,80000s
 </usr/local/texlive/2015/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb
 ></usr/local/texlive/2015/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb>
 </usr/local/texlive/2015/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb><
@@ -816,10 +819,10 @@ texmf-dist/fonts/type1/public/amsfonts/cm/cmtt10.pfb></usr/local/texlive/2015/t
 exmf-dist/fonts/type1/public/amsfonts/cm/cmtt12.pfb></usr/local/texlive/2015/te
 xmf-dist/fonts/type1/public/amsfonts/cm/cmtt9.pfb></usr/local/texlive/2015/texm
 f-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb>
-Output written on estimator_manual.pdf (19 pages, 270914 bytes).
+Output written on estimator_manual.pdf (19 pages, 274155 bytes).
 PDF statistics:
- 263 PDF objects out of 1000 (max. 8388607)
- 220 compressed objects within 3 object streams
- 57 named destinations out of 1000 (max. 500000)
- 105 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 275 PDF objects out of 1000 (max. 8388607)
+ 232 compressed objects within 3 object streams
+ 59 named destinations out of 1000 (max. 500000)
+ 121 words of extra memory for PDF output out of 10000 (max. 10000000)
 

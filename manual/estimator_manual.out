@@ -10,4 +10,6 @@
 \BOOKMARK [2][-]{subsection.2.6}{PARAMETER START VALUES}{section.2}% 10
 \BOOKMARK [2][-]{subsection.2.7}{PROPOSAL SCALING}{section.2}% 11
 \BOOKMARK [2][-]{subsection.2.8}{PROPOSAL GROUPING}{section.2}% 12
-\BOOKMARK [1][-]{section.3}{How to define your own usermodel}{}% 13
+\BOOKMARK [1][-]{section.3}{How to define your own model}{}% 13
+\BOOKMARK [2][-]{subsection.3.1}{The usermodel\137class}{section.3}% 14
+\BOOKMARK [1][-]{section.4}{The sdf usermodel}{}% 15
