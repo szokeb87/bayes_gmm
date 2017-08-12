@@ -65,6 +65,7 @@ namespace initialize {
           scl::denval                   get_likelihood_old() { return likelihood_old; }
           void                          set_theta(const scl::realmat& param) { theta = param; }
           void                          set_theta_old(const scl::realmat& param) { theta_old = param; }
+          scl::realmat                  draw_initial_particle(INT_32BIT& seed) const;
           bool                          support(const scl::realmat& theta);
           scl::denval                   prior(const scl::realmat& theta, const scl::realmat& stats);
           scl::denval                   likelihood();

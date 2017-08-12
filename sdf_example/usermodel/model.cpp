@@ -12,8 +12,7 @@ using namespace scl;
 void model::set_theta(const realmat& theta) {
 
     moment_cond->set_theta(theta);
-    moment_cond->extract_params_from_theta(A_y, C_y, rho, sigma, lambda_0, lambda_y, lambda_x,
-                                          delta_0, delta_y, delta_x);
+    moment_cond->extract_params_from_theta(A_y, C_y, rho, sigma, lambda_0, lambda_y, lambda_x);
 }
 
 
@@ -21,7 +20,7 @@ realmat model::get_theta() const {
 
     INTEGER K = moment_cond->get_numb_obs_factor();
     INTEGER L = moment_cond->get_lag_obs_factor();
-    INTEGER len_theta = L*pow(K, 2) + K*K + K + 4 + (K+1)*(K+2);
+    INTEGER len_theta = L*pow(K, 2) + K*K + 2 + (K+1)*(K+2);
     realmat theta(len_theta, 1);
 
     REAL* theta_iter = theta.begin();
@@ -43,11 +42,6 @@ realmat model::get_theta() const {
     for (iter = lambda_0.begin(); iter < lambda_0.end(); ++iter){ *theta_iter++ = *iter; }
     for (iter = lambda_y.begin(); iter < lambda_y.end(); ++iter){ *theta_iter++ = *iter; }
     for (iter = lambda_x.begin(); iter < lambda_x.end(); ++iter){ *theta_iter++ = *iter; }
-
-    // Write the parameters of the risk-free rate into theta
-    *theta_iter++ = delta_0;
-    for (iter = delta_y.begin(); iter < delta_y.end(); ++iter){ *theta_iter++ = *iter; }
-    *theta_iter++ = delta_x;
 
     return theta;
 
@@ -79,7 +73,8 @@ REAL model::prob_yt(INTEGER t, realmat* particle_path_ptr, particles_recursive* 
   INTEGER d = W.ncol();
   const REAL logoneontwopi = log(1.0/6.283195307179587);
 
-  REAL log_likelihood = -0.5*REAL(t)*obj + 0.5*REAL(d)*logoneontwopi;
+  INTEGER L = moment_cond->get_lag_obs_factor();
+  REAL log_likelihood = -0.5*REAL(t-L)*obj + 0.5*REAL(d)*logoneontwopi;
 
   #if defined USE_JACOBIAN
     log_likelihood += 0.5*logdetW;
@@ -118,7 +113,8 @@ denval model::likelihood(INTEGER t, realmat* particle_path_ptr){
     INTEGER d = W.ncol();
     const REAL logoneontwopi = log(1.0/6.283195307179587);
 
-    REAL log_likelihood = -0.5*REAL(t)*obj + 0.5*REAL(d)*logoneontwopi;
+    INTEGER L = moment_cond->get_lag_obs_factor();
+    REAL log_likelihood = -0.5*REAL(t-L)*obj + 0.5*REAL(d)*logoneontwopi;
 
     #if defined USE_JACOBIAN
       log_likelihood += 0.5*logdetW;

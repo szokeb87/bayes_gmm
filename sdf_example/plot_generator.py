@@ -1,26 +1,28 @@
 
-# coding: utf-8
-
-# In[1]:
-
-#get_ipython().magic('matplotlib inline')
-
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
-#from diagnostics import *
+import sys
 
 sns_colors = sns.color_palette()
 
-
-# In[2]:
-
 # Extra parameters
 folder = './result_files/'
-paramfile = './sdf.param.000'
-burnin = 0
-second_thinning = 1
+
+if len(sys.argv)>1:
+    paramfile = sys.argv[1]    
+else:
+    paramfile = './sdf.param'
+
+if len(sys.argv)>2:
+    burnin = int(sys.argv[2])
+    second_thinning = int(sys.argv[3])
+    reject_low = int(sys.argv[4])
+else:
+    burnin = 0
+    second_thinning = 1
+    reject_low = 0
 
 
 # ---------------------------------------
@@ -160,7 +162,7 @@ model_params
 
 reject_draws = np.zeros((InputParams['len_model_param'] + 1, 2))
 
-for i in range(InputParams['num_mcmc_files'] + 1):
+for i in range(reject_low, InputParams['num_mcmc_files'] + 1):
     file = pd.read_csv(folder + InputParams['project_name'] + '.reject.00{}.dat'.format(i), header=None)
     dim = np.asarray(file[:2], dtype=int).squeeze()
     reject_draws += np.asarray(file[2:]).reshape(dim[1], dim[0]).T[:, -2:]
@@ -350,12 +352,12 @@ plt.savefig(folder + 'figures/fig5.png')
 
 fig, ax = plt.subplots(figsize=(12, 4))
 
-particle_filter = pd.read_csv(folder + InputParams['project_name'] + '.usrvar.filter.000.dat')
-particle_filter.iloc[:, [-2, 0]].plot(ax=ax)
+particle_filter = pd.read_csv(folder + InputParams['project_name'] + '.usrvar.filter.009.dat')
+particle_filter.iloc[:, [-1, 0]].plot(ax=ax)
 (particle_filter.iloc[:, 0] + 2*particle_filter.iloc[:, 1]).plot(ax=ax, linestyle='--', color=[sns_colors[1]])
 (particle_filter.iloc[:, 0] - 2*particle_filter.iloc[:, 1]).plot(ax=ax, linestyle='--', color=[sns_colors[1]])
 plt.suptitle('Particle smoother', fontsize=16, y=1.0)
-plt.ylim([-.7, .6])
+plt.ylim([-.07, .07])
 plt.tight_layout()
 plt.savefig(folder + 'figures/fig6.png')
 
@@ -364,12 +366,12 @@ plt.savefig(folder + 'figures/fig6.png')
 
 fig, ax = plt.subplots(figsize=(12, 4))
 
-particle_filter = pd.read_csv(folder + InputParams['project_name'] + '.usrvar.filter.000.dat')
-particle_filter.iloc[:, [-2, 2]].plot(ax=ax)
+particle_filter = pd.read_csv(folder + InputParams['project_name'] + '.usrvar.filter.009.dat')
+particle_filter.iloc[:, [-1, 2]].plot(ax=ax)
 (particle_filter.iloc[:, 2] + 2*particle_filter.iloc[:, 3]).plot(ax=ax, linestyle='--', color=[sns_colors[1]])
 (particle_filter.iloc[:, 2] - 2*particle_filter.iloc[:, 3]).plot(ax=ax, linestyle='--', color=[sns_colors[1]])
 plt.suptitle('Particle filter', fontsize=16, y=1.0)
-plt.ylim([-.7, .6])
+plt.ylim([-.07, .07])
 plt.tight_layout()
 plt.savefig(folder + 'figures/fig7.png')
 
@@ -380,12 +382,12 @@ x = np.linspace(-.5, 0.5)
 
 fig, ax = plt.subplots(figsize=(6, 6))
 
-ax.scatter(x=particle_filter.iloc[:, -2], y=particle_filter.iloc[:, 0], color=sns_colors[0])
+ax.scatter(x=particle_filter.iloc[:, -1], y=particle_filter.iloc[:, 0], color=sns_colors[0])
 ax.plot(x, x, color=sns_colors[1])
 ax.axhline(0, color = 'k', lw=1)
 ax.axvline(0, color = 'k', lw=1)
-ax.set_xlim([-.5, .5])
-ax.set_ylim([-.5, .5])
+ax.set_xlim([-.07, .07])
+ax.set_ylim([-.07, .07])
 ax.set_title('Particle smoother', fontsize=16, y=1.0)
 
 plt.tight_layout()
@@ -398,12 +400,12 @@ x = np.linspace(-.5, 0.5)
 
 fig, ax = plt.subplots(figsize=(6, 6))
 
-ax.scatter(x=particle_filter.iloc[:, -2], y=particle_filter.iloc[:, 2], color=sns_colors[0])
+ax.scatter(x=particle_filter.iloc[:, -1], y=particle_filter.iloc[:, 2], color=sns_colors[0])
 ax.plot(x, x, color=sns_colors[1])
 ax.axhline(0, color = 'k', lw=1)
 ax.axvline(0, color = 'k', lw=1)
-ax.set_xlim([-.5, .5])
-ax.set_ylim([-.5, .5])
+ax.set_xlim([-.07, .07])
+ax.set_ylim([-.07, .07])
 ax.set_title('Particle filter', fontsize=16, y=1.0)
 
 plt.tight_layout()

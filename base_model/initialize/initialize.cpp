@@ -918,7 +918,7 @@ bool initialize::specification_class::write_params(string paramfile, string pref
       string alttail = ps.str();
       ps.str("");
 
-      filename = pathname  + "../result_files/" + prefix + ".paramfile.alt";
+      filename = pathname  + "./result_files/" + prefix + ".paramfile.alt";
 
       fout.open(filename.c_str());
       if (!fout) return false;
@@ -944,7 +944,7 @@ bool initialize::specification_class::write_params(string paramfile, string pref
    string regtail = ps.str();
    ps.str("");
 
-   filename = pathname + "../result_files/" + prefix + ".paramfile.fit";
+   filename = pathname + "./result_files/" + prefix + ".paramfile.fit";
 
    fout.open(filename.c_str());
    if (!fout) return false;
@@ -954,7 +954,7 @@ bool initialize::specification_class::write_params(string paramfile, string pref
    fout.clear();
    fout.close();
 
-   filename = pathname + "../result_files/" + prefix + ".paramfile.end";
+   filename = pathname + "./result_files/" + prefix + ".paramfile.end";
 
    fout.open(filename.c_str());
    if (!fout) return false;

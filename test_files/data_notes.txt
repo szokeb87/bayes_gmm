@@ -1,0 +1,7 @@
+Notes on the data set and notations:
+
+- when we use t as an argument, we include the first lag_obs_factor many
+- len_history includes the first lag_obs_factor many observations, so it is NOT equal to the number of g
+=> len_history can be initialized as data->ncol()
+- both the moments and the gmm instance have the data (with inactive initial elements)
+- the number of g_t (i.e. the number of terms in the sum) is (len_history - lag_obs_factor)

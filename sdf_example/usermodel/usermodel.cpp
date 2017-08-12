@@ -23,7 +23,7 @@ namespace initialize {
                                        INTEGER len_model_func,
                                        const std::vector<std::string>& model_addlines,
                                        std::ostream& detail)
-                                     : data(dat), len_theta(26), len_stats(1), numb_obs_factor(1),
+                                     : data(dat), len_theta(10), len_stats(1), numb_obs_factor(1),
                                        lag_obs_factor(1), numb_returns(1), lag_hac_gmm(0),
                                        N(2500), variable_seed(740726), saved_particle_path(),
                                        counter(0), particle_update(50), gibbs_count(0) {
@@ -44,21 +44,6 @@ namespace initialize {
 
       gibbs_draws.reserve(5000);  // gibbs_draws is std::vector<scl::realmat>
 
-      //------------------------------------------------------------------------
-      // Load in the content of initial_particle.dat into saved_particle_path
-      //------------------------------------------------------------------------
-      realmat initial_particle;
-      if (vecread((pathname + "./data/initial_particle.dat").c_str(), initial_particle) == 0) {
-          error("Error, usermodel_class, cannot read initial_particle.dat"); }
-      INTEGER sample_size = data.ncol();              // number of observations
-      INTEGER d = initial_particle.nrow();                  // dimension of latent variable
-      saved_particle_path.resize(d, sample_size + 1);
-      for (INTEGER t=1; t<=sample_size+1; ++t) {
-          for (INTEGER k=1; k<=d; ++k) {
-              saved_particle_path(k, t) = initial_particle(k, t);  } }
-
-      if (d != 1) {
-          error("Error, usermodel_class, initial_particle has wrong dimension");  }
       if (model_addlines.size() != 9) {      // 7 params + #begin + #end = 9
           error("Error, usermodel_class, lag_obs_factor, lag_hac_gmm, N, len_simul not in parmfile"); }
 
@@ -84,8 +69,19 @@ namespace initialize {
       detail.flush();
 
 
-      try  {        // to initialize instances moments -> gmm -> model
-          moment_cond = new moments(&data, &saved_particle_path, sample_size, lag_obs_factor,
+      //------------------------------------------------------------------------
+      // Either load in the content of initial_particle.dat into saved_particle_path
+      //------------------------------------------------------------------------
+      saved_particle_path.resize(1, data.ncol());
+      if (vecread((pathname + "./data/initial_particle.dat").c_str(), saved_particle_path) == 0) {
+          //error("Error, usermodel_class, cannot read initial_particle.dat");
+
+      // OR simulate an initial saved_particle_path
+          saved_particle_path = draw_initial_particle(variable_seed);
+      }
+
+      try  {        // to initialize instances: moments -> gmm -> model
+          moment_cond = new moments(&data, &saved_particle_path, data.ncol(), lag_obs_factor,
                                     numb_obs_factor, numb_returns);
           gmm_objfun = new gmm(moment_cond, &data, data.ncol(), lag_hac_gmm);
           gmm_objfun->set_regularize_W(true, 1.0e-3);
@@ -97,20 +93,10 @@ namespace initialize {
       detail << '\n';
       detail << "\t moment_cond, gmm_objfun, and model successfully instantiated" << '\n';
 
-      realmat y(data.nrow(), sample_size + 1);
-      for (INTEGER i=1; i<=data.nrow(); ++i) {
-            y(i, 1) = data(i, 1);
-            for (INTEGER t=1; t<=sample_size; ++t) { y(i, t + 1) = data(i, t);};
-      };
-
-      bool dset = gmm_objfun->set_data(&y);                      // sets in moment_cond also
-      bool nset = gmm_objfun->set_len_history(sample_size + 1);  // sets in moment_cond also
-      if (!(dset && nset)) error("Error, usermodel_class, likelihood, config fail");
-
       moment_cond->set_theta(theta_old);
       model_instance->set_theta(theta_old);
       realmat* particle_path_ptr = &saved_particle_path;
-      likelihood_old = model_instance->likelihood(sample_size + 1, particle_path_ptr);
+      likelihood_old = model_instance->likelihood(data.ncol(), particle_path_ptr);
 
       try  {
           draws = new vector<particles_recursive>(N);
@@ -139,6 +125,33 @@ namespace initialize {
       detail << starbox("/End usermodel_class constructor output//");
       detail << '\n';
       detail.flush();
+  }
+
+
+  realmat usermodel_class::draw_initial_particle(INT_32BIT& seed) const {
+
+      vector<realmat> A_y; realmat C_y;
+      realmat lambda_0; realmat lambda_y; realmat lambda_x;
+
+      REAL rho;
+      REAL sigma;
+      default_params(A_y, C_y, rho, sigma, lambda_0, lambda_y, lambda_x);
+
+      const INTEGER spin = 500;
+      REAL xlag = (sigma/sqrt(1.0 - rho*rho))*unsk(seed);      // random draw from stationary
+      // run for spin period to initialize the sample
+      for (INTEGER t=1; t<=spin; ++t) {
+          REAL x = rho*xlag + sigma*unsk(seed);
+          xlag = x; }
+
+      // set initials as the last element of trial run
+      realmat initial_particle(1, data.ncol());
+      initial_particle[1] = xlag;
+      for (INTEGER t=2; t<=data.ncol(); ++t) {
+          initial_particle[t] = rho*xlag + sigma*unsk(seed);
+          xlag = initial_particle[t]; }
+
+      return initial_particle;
   }
 
 
@@ -232,7 +245,6 @@ namespace initialize {
 
 
 
-
 //===========================================================================
 // PARTICLE FILTER
 //===========================================================================
@@ -245,19 +257,9 @@ namespace initialize {
           INT_32BIT seed = fixed_seed;
       #endif
 
+
       stopwatch timer;
-
       INTEGER sample_size = data.ncol();
-
-      realmat y(data.nrow(), sample_size + 1);
-      for (INTEGER i=1; i<=data.nrow(); ++i) {
-            y(i, 1) = data(i, 1);
-            for (INTEGER t=1; t<=sample_size; ++t) { y(i, t + 1) = data(i, t);};
-      };
-
-      bool dset = gmm_objfun->set_data(&y);                        // sets in moment_cond also
-      bool nset = gmm_objfun->set_len_history(sample_size + 1);    // sets in moment_cond also
-      if (!(dset && nset)) error("Error, usermodel_class, likelihood, config fail");
 
       //-----------------------------------------------------------------------------------
       //  If counter < particle_update and goes to mcmc, otherwise reset counter=0 and PF
@@ -265,15 +267,14 @@ namespace initialize {
       if (counter < particle_update) {
 
           // reset the parameters of svmoments and svmod
-          //moment_cond->set_theta(theta);
           model_instance->set_theta(theta);
 
           realmat* particle_path_ptr = &saved_particle_path;
-          denval rv = model_instance->likelihood(sample_size+1, particle_path_ptr);
+          denval rv = model_instance->likelihood(sample_size, particle_path_ptr);
 
           moment_cond->set_theta(theta_old);
           model_instance->set_theta(theta_old);
-          likelihood_old = model_instance->likelihood(sample_size+1, particle_path_ptr);
+          likelihood_old = model_instance->likelihood(sample_size, particle_path_ptr);
 
           ++counter;
           return rv;
@@ -284,7 +285,7 @@ namespace initialize {
       //--------------------------------------------------------------------------------------
       else {
 
-          //timer.reset();
+          timer.reset();
           counter = 0;
 
           //moment_cond->set_theta(theta_old);
@@ -294,8 +295,8 @@ namespace initialize {
           INTEGER T0 = moment_cond->get_minT();
           INTEGER d = moment_cond->get_dim();
 
-          REAL weights[N]; //REAL weights_ancestor[N];
-          REAL sum = 0.0; //REAL sum_ancestor = 0.0;
+          REAL weights[N];  //REAL weights_ancestor[N];
+          REAL sum = 0.0;   //REAL sum_ancestor = 0.0;
 
           //--------------------------------------------------------------------
           // (1) Initialization of the particle filter (t<T0)
@@ -327,7 +328,7 @@ namespace initialize {
           // (2) Running the particle filter (T0 < t <= sample_size+1)
           //--------------------------------------------------------------------
 
-          for (INTEGER t=T0; t<=sample_size+1; ++t) {
+          for (INTEGER t=T0; t<=sample_size; ++t) {
 
               vector<particles_recursive>* save = draws;
               draws = smooth;
@@ -395,11 +396,11 @@ namespace initialize {
           model_instance->set_theta(theta);
 
           realmat* particle_path_ptr = &saved_particle_path;
-          denval rv = model_instance->likelihood(sample_size+1, particle_path_ptr);
+          denval rv = model_instance->likelihood(sample_size, particle_path_ptr);
 
           moment_cond->set_theta(theta_old);
           model_instance->set_theta(theta_old);
-          likelihood_old = model_instance->likelihood(sample_size+1, particle_path_ptr);
+          likelihood_old = model_instance->likelihood(sample_size, particle_path_ptr);
 
           //cout << "particle filter  "<< timer.time() << '\n';
           return rv;
@@ -451,16 +452,16 @@ namespace initialize {
       // Compute mean and stdev from smooth
       //======================================================================
       INTEGER n = data.ncol();
-      realmat mean(1, n+1, 0.0);
+      realmat mean(1, n, 0.0);
       for (INTEGER i=0; i<N; ++i) {
           mean += (*smooth)[i].particle_path; }
       mean = mean/N;
 
-      realmat sdev(1,n+1,0.0);
+      realmat sdev(1, n, 0.0);
       for (INTEGER i=0; i<N; ++i) {
           realmat z = (*smooth)[i].particle_path - mean;
-          for (INTEGER t=1; t<=n+1; ++t) sdev[t] += z[t]*z[t]; }
-      for (INTEGER t=1; t<=n+1; ++t) sdev[t] = sqrt(sdev[t]/REAL(N-1));
+          for (INTEGER t=1; t<=n; ++t) sdev[t] += z[t]*z[t]; }
+      for (INTEGER t=1; t<=n; ++t) sdev[t] = sqrt(sdev[t]/REAL(N-1));
 
       realmat smooth_mean = mean;
       realmat smooth_sdev = sdev;
@@ -475,8 +476,8 @@ namespace initialize {
       fill(sdev, 0.0);
       for (INTEGER i=0; i<N; ++i) {
           realmat z = (*filter)[i].particle_path - mean;
-          for (INTEGER t=1; t<=n+1; ++t) sdev[t] += z[t]*z[t]; }
-      for (INTEGER t=1; t<=n+1; ++t) sdev[t] = sqrt(sdev[t]/REAL(N-1));
+          for (INTEGER t=1; t<=n; ++t) sdev[t] += z[t]*z[t]; }
+      for (INTEGER t=1; t<=n; ++t) sdev[t] = sqrt(sdev[t]/REAL(N-1));
 
       realmat filter_mean = mean;
       realmat filter_sdev = sdev;
@@ -486,17 +487,18 @@ namespace initialize {
       // Load in sample
       //======================================================================
       realmat raw;
-      vecread((pathname + "./data/data.dat").c_str(), raw, 2, data.ncol());
+      vecread((pathname + "./data/initial_particle.dat").c_str(), raw);
+      //vecread((pathname + "./data/data.dat").c_str(), raw, 2, data.ncol());
 
       foutname = pathname_result_files + stem + ".filter."+ fmt('d', 3, ifile)('0') + ".dat";
       fout.open(foutname.c_str());
       if (!fout) error("Error, smooth, cannot open fout");
 
-      fout << "smooth_mean, smooth_sdev, filter_mean, filter_sdev, x, y" << '\n';
-      for (INTEGER t=2; t<=n+1; ++t) {
+      fout << "smooth_mean, smooth_sdev, filter_mean, filter_sdev, x" << '\n';
+      for (INTEGER t=lag_obs_factor+1; t<=n; ++t) {
           fout << smooth_mean[t] <<','<< smooth_sdev[t] <<','
                << filter_mean[t] <<','<< filter_sdev[t] <<','
-               << raw(2, t-1) <<','<< raw(1, t-1) << '\n';  }
+               << raw(1, t) << '\n';  }
 
       fout.clear(); fout.close();
   }

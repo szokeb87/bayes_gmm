@@ -243,6 +243,7 @@ gmm::gmm(moment_function_base* moment_cond_ptr, const realmat* data_ptr, INTEGER
          moment_cond(moment_cond_ptr), data_ptr(data_ptr), len_history(n), lag_hac_gmm(lag_hac_gmm),
          correct_for_mean(true), regularize_W(false), ridge(0.0), warning_messages(true){
 
+    //if (lag_hac_gmm > 1) correct_for_mean = false;
     bool dat = moment_cond->set_data(data_ptr);
     bool ssz = moment_cond->set_len_history(len_history);
     if ( !(dat && ssz) ) { error("Error, gmm, constructor, cannot configure moment function"); }
@@ -329,7 +330,6 @@ REAL gmm::operator()(const realmat& theta, realmat& m, realmat& W, REAL& logdetW
             if (lag==0){ realmat mtlag = mt; R += (mt - m)*T(mtlag - m); }
             else { realmat mtlag = (*store_m_history)[t - lag]; R += (mt - m)*T(mtlag - m);}
         }
-        //R = R/n;
         R = R/(n-T0+1);
         if (lag==0){ S += R; }
         else { S += parzen(REAL(lag)/REAL(lag_hac_gmm))*(R + T(R)); }
@@ -365,7 +365,7 @@ REAL gmm::operator()(const realmat& theta, realmat& m, realmat& W, REAL& logdetW
         // if any of the entry in S is NOT finite -> replace S with diagonal
         //----------------------------------------------------------------------
         bool numerr = false;
-        for (INTEGER i=1; i<=S.size(); ++i) if (!IsFinite(S[i])) numerr=true;
+        for (INTEGER i=1; i<=S.size(); ++i) if (!IsFinite(S[i])) numerr = true;
         if (numerr) {         // some entry in S was not finite -> Set S to diagonal
             W_numerr += 1;
             if (warning_messages) warn("Warning, gmm, S set to diagonal");
@@ -441,7 +441,6 @@ REAL gmm::operator()(const realmat& theta, realmat& mu, vector<realmat>& R,
 
     realmat mt = (*moment_cond)(n);
     mu += mt;
-    //m = mu/n;
     m = mu/(n-T0+1);
 
     // Calculate the no lag term of S
@@ -450,20 +449,22 @@ REAL gmm::operator()(const realmat& theta, realmat& mu, vector<realmat>& R,
             realmat Ru(d, d, 0.0);
             if (lag==0){
                 realmat mtlag = mt; R[lag] += mt*T(mtlag);
-                //Ru = R[lag]/n  - m*T(m)*(n+T0-1)/n;
-                Ru = R[lag]/(n-T0+1)  - m*T(m);
+                Ru = R[lag]/(n-T0+1) - m*T(m);
                 S += Ru;
-              }
-            else { if (n>=T0+lag) {
-                        realmat mtlag = (*moment_cond)(n-lag); R[lag] += mt*T(mtlag);
-                        //Ru = R[lag]/n - m*T(m)*(n-T0+1)/n;
-                        Ru = R[lag]/(n-T0+1)  - m*T(m);
-                        S += parzen(REAL(lag)/REAL(lag_hac_gmm))*(Ru + T(Ru));
-                    }
+            }
+            else {                      // if lag > 0
+                if (n>=T0+lag){         // each R[lag] starts from t=T0+lag, otherwise 0
+                realmat mtlag = (*moment_cond)(n-lag); R[lag] += mt*T(mtlag);
+                realmat adj_before(d, 1, 0.0); realmat adj_after(d, 1, 0.0);
+                for (INTEGER l=0; l<lag; l++){
+                      adj_before += (*moment_cond)(T0+l);
+                      adj_after += (*moment_cond)(n-l);
+                }
+                Ru = (R[lag] - m*T(m)*(n-T0+1+lag) + adj_before*T(m) + m*T(adj_after))/(n-T0+1);
+                S += parzen(REAL(lag)/REAL(lag_hac_gmm))*(Ru + T(Ru));
+                }
             }
         }
-
-
 
     } else {
       for (INTEGER lag=0; lag<=lag_hac_gmm; lag++) {
@@ -498,7 +499,7 @@ REAL gmm::operator()(const realmat& theta, realmat& mu, vector<realmat>& R,
         // if any of the entry in S is NOT finite -> replace S with diagonal
         //----------------------------------------------------------------------
         bool numerr = false;
-        for (INTEGER i=1; i<=S.size(); ++i) if (!IsFinite(S[i])) numerr=true;
+        for (INTEGER i=1; i<=S.size(); ++i) if (!IsFinite(S[i])) numerr = true;
         if (numerr) {         // some entry in S was not finite -> Set S to diagonal
             W_numerr += 1;
             if (warning_messages) warn("Warning, gmm, S set to diagonal");

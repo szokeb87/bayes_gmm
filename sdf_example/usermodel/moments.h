@@ -32,19 +32,19 @@ class moments : public scl::moment_function_base {
                                               if (Tmax > data_ptr->ncol()) scl::error("Error, moments, Tmax too large"); }
 
         // From moment_function_base
-        scl::realmat          operator() (INTEGER t);                   // returns moment conditions at time t
+        scl::realmat          operator() (INTEGER t);                      // returns moment conditions at time t
         bool                  set_data(const scl::realmat* dat);
-        bool                  set_len_history(INTEGER Tmax);            // changes n
+        bool                  set_len_history(INTEGER Tmax);               // changes n
         bool                  set_theta(const scl::realmat& param);
-        INTEGER               get_minT()  { return lag_obs_factor + 2; };  // minimum allowable value of t
-        INTEGER               get_dim();                                // dimension of m_t
+        INTEGER               get_minT()  { return lag_obs_factor + 1; };  // minimum allowable value of t
+        INTEGER               get_dim();                                   // dimension of m_t
         // new members
         INTEGER               get_lag_obs_factor() {return lag_obs_factor;};
         INTEGER               get_numb_obs_factor() {return numb_obs_factor;};
         bool                  set_particle_path_ptr(const scl::realmat* part);
         void                  extract_params_from_theta(std::vector<scl::realmat>& A_y, scl::realmat& C_y, REAL& rho,
                                                         REAL& sigma, scl::realmat& lambda_0, scl::realmat& lambda_y,
-                                                        scl::realmat& lambda_x, REAL& delta_0, scl::realmat& delta_y, REAL& delta_x);
+                                                        scl::realmat& lambda_x);
 };
 
 #endif

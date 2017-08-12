@@ -14,12 +14,17 @@
 \usepackage{enumitem}
 \usepackage{lipsum}
 \usepackage{hyperref}
+\usepackage[ruled,vlined]{algorithm2e}
+
+\usepackage{caption}
+%\captionsetup[table]{labelformat=empty}
 
 \setlist[description]{font=\normalfont}
 
 \definecolor{blue}{RGB}{26, 110, 178}
 \definecolor{orange}{RGB}{250, 120, 10}
 \definecolor{Red}{RGB}{162, 27, 27}
+\definecolor{mygray}{gray}{0.6}
 
 \hypersetup{
         colorlinks=true, %false
@@ -358,26 +363,29 @@ As for the methods, there are three important ones
 \pagebreak
 
 
-\section{The \texttt{sdf} usermodel}
+\section{Example: the \texttt{sdf} usermodel}
 
-Necessary parameters to be given 
-\begin{description}
-\item[$\mathbf{K}$ or \texttt{numb\_obs\_factor}:] Number of observable macro risk variables
-\item[$\mathbf{L}$ or \texttt{lag\_obs\_factor}:] Number of lags for the observable macro risk variables
-\item[$\mathbf{I}$ or \texttt{numb\_returns}:] Number of returns used in the estimation
-\end{description}
+Important parameters to be specified in the MODEL PARAMFILE block:  
+\begin{center}
+\begin{tabular}{lcl}
+Name in InputParam file & Notation & Description\\
+\hline
+\texttt{numb\_obs\_factor} &  $\mathbf{K}$ & Number of observable macro risk variables \\
+\texttt{lag\_obs\_factor} &  $\mathbf{L}$ & Number of lags for the observable macro risk variables \\
+\texttt{numb\_returns} & $\mathbf{I}$ & Number of returns used in the estimation
+\end{tabular}
+\end{center}
 
 
-
-The \texttt{data.dat} file has the following format
+The \texttt{data.dat} file, containing $(K + I + 1)$ columns, has the following format
 \begin{itemize}
-\item Let $Y_t$ be the vector of \textbf{observable} risk factors in a demeaned format, i.e.
+\item \textbf{$1:K$ cols:} Let $Y_t$ be the vector of \textbf{observable} risk factors in a demeaned format, i.e.
 \begin{align*}
 Y_t := \left[ y_t^1 - \mu^1_y, y_t^2 - \mu^2_y, \dots, y_t^K - \mu^K_y \right]'\hspace{2cm} \mu_y^k := \frac{1}{T}\sum_{t=1}^{T} y^k_t,\quad \forall k\in\{1, \dots, K\}
 \end{align*} 
-These constitute the first $KL$ columns.
-\item The remaining columns contain the log returns $\log R^i_t$ for various assets $i\in \mathcal{I}$.
-\item (?) Maybe after that could come the conditioning variables
+\item \textbf{$K+1$th col:} short risk-free rate proxy $r_t$
+\item \textbf{$(K+1):(K+1+I)$ cols:} log risky returns $\log R^i_t$ for various assets $i\in \mathcal{I}$.
+\item[] (???) Maybe after that could come the conditioning variables
 \end{itemize}
 
 The statistical model is the following
@@ -398,14 +406,10 @@ Y_{t} \\ X_{t}
 \end{bmatrix}\begin{bmatrix} 
 Y_{t} \\ X_{t}
 \end{bmatrix} \quad\quad\quad \text{with}\quad \lambda_t \in \mathbb{R}^{\text{dim}(\varepsilon)}\\
-\log\left( \frac{S_{t+1}}{S_t}\right) &= -\textcolor{blue}{\delta_0} - \begin{bmatrix} 
-\textcolor{blue}{\delta_y} & \textcolor{blue}{\delta_x} 
-\end{bmatrix}\begin{bmatrix} 
-Y_{t} \\ X_{t}
-\end{bmatrix} - \frac{|\lambda_t|^2}{2}  - \lambda_t \cdot  
+\log\left( \frac{S_{t+1}}{S_t}\right) &= - r_t - \frac{|\lambda_t|^2}{2}  - \lambda_t \cdot  
 \varepsilon_{t+1} 
 \end{align*} 
-That implies the following moment conditions
+implying the following moment conditions
 \begin{align*}
 \mathbf{0}_{K\times KL} &= \mathbf{m}_{1}(y_{t+1}, y_t, \theta) = E\left[\left(Y_{t+1} - \sum_{l=1}^{L}\textcolor{orange}{A_{y, l}} Y_{t+1-l}\right)\begin{bmatrix}
 Y'_t & Y'_{t-1} & \dots & Y'_{t-L}
@@ -413,11 +417,12 @@ Y'_t & Y'_{t-1} & \dots & Y'_{t-L}
 \mathbf{0}_{K\times K} &= \mathbf{m}_{2}(y_{t+1}, y_t, \theta) = E\left[\left(Y_{t+1} - \sum_{l=1}^{L}\textcolor{orange}{A_{y, l}} Y_{t+1-l}\right)\left(Y_{t+1} - \sum_{l=1}^{L}\textcolor{orange}{A_{y, l}} Y_{t+1-l}\right)'\right] - \textcolor{orange}{C_yC_y'}\\
 0 &= \mathbf{m}_{3}(x_{t+1}, x_t, \theta) = E\left[\left(X_{t+1} - \textcolor{blue}{A_{x}} X_{t}\right)X_t\right] \\
 0 &= \mathbf{m}_{4}(x_{t+1}, x_t, \theta) = E\left[\left(X_{t+1} - \textcolor{blue}{A_{x}} X_{t}\right)^2\right] - \textcolor{blue}{C_x}^2\\
-0 &= \mathbf{m}^i_{5}(z_{t+1}, z_t, x_{t+1}, x_t, \theta) = E\left[\exp\left(- \begin{bmatrix} 
-\textcolor{blue}{\delta_0} & \textcolor{blue}{\delta_y} & \textcolor{blue}{\delta_x} 
-\end{bmatrix} \begin{bmatrix}
-1 \\ Y_t \\ X_t
-\end{bmatrix} - \frac{1}{2}\begin{bmatrix}
+\end{align*}
+and -- where we define $\textcolor{blue}{\Lambda} := \begin{bmatrix} 
+\textcolor{blue}{\lambda_0} & \textcolor{blue}{\lambda_y} & \textcolor{blue}{\lambda_x} 
+\end{bmatrix}$ --
+\begin{align*}
+0 &= \mathbf{m}^i_{5}(z_{t+1}, z_t, x_{t+1}, x_t, \theta) = E\left[\exp\left(-r_t - \frac{1}{2}\begin{bmatrix}
 1 \\ Y_t \\ X_t
 \end{bmatrix}'\textcolor{blue}{\Lambda'\Lambda}\begin{bmatrix}
 1 \\ Y_t \\ X_t
@@ -430,20 +435,241 @@ Y'_t & Y'_{t-1} & \dots & Y'_{t-L}
 \left(Y_{t+1} - \sum_{l=1}^{L}\textcolor{orange}{A_{y, l}} Y_{t+1-l}\right)\\
 X_{t+1}-\textcolor{blue}{A_x} X_t
 \end{bmatrix} + \log R^i_{t+1} \right) - 1 \right]
-\end{align*}
-where $\textcolor{blue}{\Lambda} := \begin{bmatrix} 
-\textcolor{blue}{\lambda_0} & \textcolor{blue}{\lambda_y} & \textcolor{blue}{\lambda_x} 
-\end{bmatrix}$. If $Y_t$ includes the risk-free interest rate, then $\delta_0=\delta_y=\delta_{y,\neq r} =0$.
+\end{align*} 
 
-The $\theta$ vector is of length $K^2L + \frac{K(K+1)}{2} + 2 + K(K+2) + (K+2)$ with 
+The $\theta$ vector is of length $K^2L + \frac{K(K+1)}{2} + 2 + (K+1)(K+2)$ with 
 \begin{align*}
 \theta :=\begin{bmatrix}
- \text{vec}\left(A_{y, 1}\right)' & \dots & \text{vec}\left(A_{y, L}\right)' & \text{vec}\left(C_y\right) & \rho & \sigma & \text{vec}\left(\Lambda\right)' &  \delta_0 & \delta_y' & \delta_x
+ \text{vec}\left(A_{y, 1}\right)' & \dots & \text{vec}\left(A_{y, L}\right)' & \text{vec}\left(C_y\right) & \rho & \sigma & \text{vec}\left(\Lambda\right)'
 \end{bmatrix}
 \end{align*}
 
+\subsection{Structure of \texttt{data.dat}}
+
+The program presumes that the data file has the following format
+
+
+\begin{table}[!htb]
+\begin{minipage}{.7\linewidth}
+\centering
+\begin{tabular}{cccccccc}
+& $Y_{1, -L+1}$ & \dots & $Y_{K, -L+1}$ & NaN & NaN & \dots & NaN \\
+& \dots & \dots & \dots & \dots & \dots & \dots & \dots \\
+& $Y_{1, 0}$ & \dots & $Y_{K, 0}$ & $r_0$ & NaN & \dots & NaN \\ \hline
+\textcolor{mygray}{$m_1, \varepsilon^Y_1 \ \leftarrow$} & $Y_{1, 1}$ & \dots & $Y_{K, 1}$ & $r_1$ & $\log R^{1}_1$ & \dots & $\log R^{I}_1$ \\ 
+& \dots & \dots & \dots & \dots & \dots & \dots & \dots \\
+\textcolor{mygray}{$m_t, \varepsilon^Y_t \ \leftarrow$} & $Y_{1, t}$ & \dots & $Y_{K, t}$ & $r_t$ & $\log R^{1}_t$ & \dots & $\log R^{I}_t$ \\ 
+& \dots & \dots & \dots & \dots & \dots & \dots & \dots \\
+\textcolor{mygray}{$m_T, \varepsilon^Y_T \ \leftarrow$} & $Y_{1, T}$ & \dots & $Y_{K, T}$ & NaN & $\log R^{1}_T$ & \dots & $\log R^{I}_T$ \\ 
+\end{tabular}
+\caption*{\texttt{data.dat}}
+\end{minipage}%
+\begin{minipage}{.3\linewidth}
+\centering
+\begin{tabular}{cc}
+ NaN  & \\
+\dots & \\
+$X_0$ & \\\hline
+$X_1$ & \textcolor{mygray}{$\rightarrow \ \varepsilon^X_1$} \\
+\dots & \\
+$X_t$ & \textcolor{mygray}{$\rightarrow \ \varepsilon^X_t$} \\
+\dots & \\
+$X_T$ & \textcolor{mygray}{$\rightarrow \ \varepsilon^X_T$} \\      
+\end{tabular}                
+\caption*{\texttt{initial\_particle.dat}}
+\end{minipage} 
+\end{table}
+where the NaN's denote entries that are \textbf{not used} during the estimation so the associated values are inconsequencial. The gray entries denote the shocks $\varepsilon_t$ calculated by using the $t:(t+L)$ row-block.   
+
+$T$ is the effective sample size (number of terms in $m_T$ defined below), so that the files \texttt{data.dat} and \texttt{initial\_particle.dat} (optional) have $T+L$ rows\footnote{This is equal to the initial.\texttt{len\_history} (private) variable of the gmm and moment classes.} The \texttt{sample\_size} variable in the InputParam File must be equal to $T+L$.
+
+\pagebreak 
+
+\subsection{Sampler}
+
+\noindent Let $Z_t \equiv [Y'_{t}, Y'_{t-1}, \dots, Y'_{t-L}, r_t, \log R_{t}^1, \dots, \log R_{t}^I]'$ (see the structure of the \texttt{data.dat} file in the next subsection). Our aim is to sample from the joint posterior density 
+\begin{align*}
+p(x^T, \theta | z^T) \propto \underbrace{p^0(z^T | x^T, \theta)}_{\text{measurement}}\underbrace{p^0(x^T|\theta)}_{\text{state transition}}\underbrace{p^0(\theta)}_{\text{prior}}
+\end{align*}
+We replace the measurement equation with the ``GMM representation''
+\begin{align*}
+p^0(z^T | x^T, \theta) \approx (2\pi)^{\frac{M}{2}}\exp\left(-\frac{T}{2} m_T(z^T; \theta, x^T)'[W(z^T;\theta, x^T)]^{-1}m_T(z^T; \theta, x^T)\right)
+\end{align*}
+with, let $\tilde{x_t}:=[x_t, x_{t-1}]'$, 
+\begin{align*}
+m_T(z^T; \theta, x^T) &:=  \frac{1}{T}\sum_{t=1}^T m(z_t, \tilde{x}_t, \theta) 
+\end{align*}
+and the HAC weighting matrix (with Parzen weights) is
+\begin{align*}
+W(z^T;\theta, x^T) &:= \sum_{\tau = - \lfloor T^{\frac{1}{5}}\rfloor}^{\lfloor T^{\frac{1}{5}}\rfloor} \widehat w\left(\frac{\tau}{\lfloor T^{\frac{1}{5}}\rfloor}\right)W_{\tau}(z^T; \theta, x^T) \\
+\widehat W_{\tau}(z^T; \theta, x^T) &:= \left\{ \begin{array}{ll}
+\frac{1}{T}\sum_{t=1+\tau}\left[m(z_t, \tilde{x}_t, \theta) - m_T(z^T; \theta, x^T)\right]\left[m(z_{t-\tau}, \tilde{x}_{t-\tau}, \theta) - m_T(z^T; \theta, x^T)\right]' & \tau\geq 0 \\
+\widehat W'_{-\tau}(z^T; \theta, x^T) & \tau<0
+\end{array}\right. \\
+w(h) &:= \left\{ \begin{array}{ll}
+1 - 6|u|^2 + 6|u|^3 & 0 \leq u < \frac{1}{2} \\
+2(1-|u|)^3 & \frac{1}{2}\leq u \leq 1
+\end{array}\right. 
+\end{align*}
+$\lfloor x \rfloor$ denotes the integer nearest of $x$. In theory, $\lfloor T^{\frac{1}{5}} \rfloor$ should be equal to \texttt{lag\_hac\_gmm} in the InputParam File. If \texttt{lag\_hac\_gmm}$=0$, we implicitly \textbf{assume} that the moment conditions are serially uncorrleated and so heteroscedastic autoregressive adjustment is not needed. 
+
+Because the GMM representation of the measurement density can only be evaluated point-wise, we need to use Monte Carlo. In particular, we use the so called \textbf{Particle Gibbs Sampler}: In an idealized setup, the posterior can be targeted by iterationg on the following two conditional steps
+\begin{enumerate}
+\item Draw $\tilde x^T$ from $x^T | \theta, z^T$\hspace{9mm}$\Rightarrow$\hspace{5mm} conditional particle filter of \cite{ADH_2010} 
+\item Draw $\tilde{\theta}$ from $\theta | \tilde x^T, z^T$ \hspace{1cm}$\Rightarrow$\hspace{5mm} Metropolis-Hastings using \cite{ChernozhukovHong_2003}
+\end{enumerate}\vspace{3mm}
+More precisely, the algorithm is the following
+\begin{algorithm}[htb]
+ \SetKw{Init}{1. Initialization}
+ \SetKw{Iter}{2. Iteration $t>T_0$}
+
+
+ \SetStartEndCondition{ }{}{}%
+ \SetKwProg{Fn}{def}{\string:}{}
+ \SetKwFunction{Range}{range}%%
+ \SetKwFunction{Metropolis}{MetropolisStep}%%
+ \SetKwFunction{PF}{CondParticleFilter}%%
+ \SetKw{KwTo}{in}\SetKwFor{For}{for}{\string:}{}%
+ \SetKwIF{If}{ElseIf}{Else}{if}{:}{elif}{else:}{}%
+ \SetKwFor{While}{while}{:}{fintq}%
+ \SetInd{.5em}{2em} 
+ %\renewcommand{\forcond}{$i$ \KwTo\Range{$n$}}
+ %\AlgoDontDisplayBlockMarkers\SetAlgoNoEnd\SetAlgoNoLine%
+   
+ \KwIn{$\theta^{(0)}$, $x^{(0)}_{1:T}$ and $z_{1:T}$}
+ \BlankLine
+ \For{$j$ \KwTo \Range{$R$}}{
+ Draw $x_{1:T}^{(j+1)}$ from \PF{$\theta^{(j)}$, $x_{1:T}^{(j)}$, $z_{1:T}$}\\
+ \BlankLine
+ Draw $\theta^{(j+1)}$ from \Metropolis{$\theta^{(j)}$, $x_{1:T}^{(j+1)}$, $z_{1:T}$}\\
+ }
+ \BlankLine  
+ \KwOut{MCMC chain $\{\theta^{(j)}, x_{1:T}^{(j)}\}_{j=1}^R$}
+ \caption{Particle Gibbs Sampler}
+\end{algorithm}
+
+With the two components
+
+
+\begin{algorithm}[H]
+ \SetKw{Init}{1. Initialization}
+ \SetKw{Iter}{2. Iteration $t>T_0$}
+
+
+ \SetStartEndCondition{ }{}{}%
+ \SetKwProg{Fn}{def}{\string:}{}
+ \SetKwFunction{Range}{range}%%
+ \SetKw{KwTo}{in}\SetKwFor{For}{for}{\string:}{}%
+ \SetKwIF{If}{ElseIf}{Else}{if}{:}{elif}{else:}{}%
+ \SetKwFor{While}{while}{:}{fintq}%
+ \SetInd{.5em}{2em} 
+ %\renewcommand{\forcond}{$i$ \KwTo\Range{$n$}}
+ %\AlgoDontDisplayBlockMarkers\SetAlgoNoEnd\SetAlgoNoLine%
+   
+ \KwIn{$\theta^{(j)}$, $x^{(j)}_{1:T}$ and $z_{1:T}$}
+ \BlankLine
+ Set the first particle $x^1_{1:T} = x^{(j)}_{1:T}$ 
+ \BlankLine
+ Set $T_0$ for the training sample\; 
+ \BlankLine
+  \For{$i$ \KwTo\Range{$\mathbf{2}$, $N$}}{
+  sample the particle path $\tilde{x}_{1:T_0}^i$ from $p^0\left(x_t | x_{t-1}, \theta\right)$ \\
+ \BlankLine  
+  set $x^i_{1:T_0} = \tilde{x}_{1:T_0}^i$
+  }
+  \BlankLine
+ \For{$t$ \KwTo\Range{$T_0+1$, $T$}}{
+	compute $w^1_t\left(\theta\right) = p\left(z_{1:t} \ | \ x^1_{1:t}, \theta\right)$ 
+  
+  \tcc{Importance sampling}  
+  \For{$i$ \KwTo\Range{$N$}}{
+  sample $\tilde{x}^i_t$ from $p^0\left(x_t | x^{i}_{t-1}, \theta\right)$\\
+ \BlankLine  
+  set $\tilde{x}^i_{1:t} = (x^i_{1:t-1}, \ \tilde{x}^i_t)$\\
+  \BlankLine    
+  compute $w^i_t\left(\theta\right) = p\left(z_{1:t} \ | \ \tilde{x}^i_{1:t}, \theta\right)$\\
+  
+  }
+ \BlankLine  
+  scale the weigths $W_t^i(\theta) = \frac{w^i_t\left(\theta\right)}{\sum_{i=1}^N w^i_t\left(\theta\right)}$\;
+ \BlankLine  
+  \tcc{Resampling}  
+  sample $N-1$ paths $\{x^i_{1:t}\}_{i=\mathbf{2}}^N$ from the set $\{\tilde{x}^i_{1:t}\}_{i=1}^{N}$ with prob $\{W^i_t(\theta)\}_{i=1}^{N}$
+  }
+ \BlankLine  
+ \KwOut{Updated path $x^{(j+1)}_{1:T} = x^N_{1:T}$}
+
+ \caption{Conditional Partical Filter}
+\end{algorithm}
+\vspace{8mm}
+
+\begin{algorithm}[H]
+ \SetKw{Init}{1. Initialization}
+ \SetKw{Iter}{2. Iteration $t>T_0$}
+
+
+ \SetStartEndCondition{ }{}{}%
+ \SetKwProg{Fn}{def}{\string:}{}
+ \SetKwFunction{Range}{range}%%
+ \SetKw{KwTo}{in}\SetKwFor{For}{for}{\string:}{}%
+ \SetKwIF{If}{ElseIf}{Else}{if}{:}{elif}{else:}{}%
+ \SetKwFor{While}{while}{:}{fintq}%
+ \SetInd{.5em}{2em} 
+ %\renewcommand{\forcond}{$i$ \KwTo\Range{$n$}}
+ %\AlgoDontDisplayBlockMarkers\SetAlgoNoEnd\SetAlgoNoLine%
+   
+ \KwIn{$\theta^{(j)}$, $x^{(j+1)}_{1:T}$ and $z_{1:T}$}
+ \BlankLine
+ \tcc{Proposal}  
+ Draw $\theta^{\text{prop}}$ from $q\left(\theta | \theta^{(j)}\right)$
+ \BlankLine
+ Set $\alpha = \min\left\{1, \ \frac{p\left(z_{1:T}| x^{(j+1)}_{1:T}, \theta^{\text{prop}}\right)}{p\left(z_{1:T} | x^{(j+1)}_{1:T}, \theta^{(j)}\right)} \right\}$ 
+ \BlankLine
+ \tcc{Accept-Reject}  
+ Draw $u\sim U[0,1]$\\
+ \BlankLine
+ 
+ \uIf{$u<\alpha$}{
+	  $\theta^{(j+1)} = \theta^{\text{prop}}$	
+ }
+ \Else{
+	  $\theta^{(j+1)} = \theta^{(j)}$ 	
+ }
+
+ \BlankLine  
+ \KwOut{Updated $\theta^{(j+1)}$}
+
+ \caption{Metropolis-Hastings step}
+\end{algorithm}
+
+\subsection*{Recursive formulas for the mean and autocovariance estimators}
+
+To speed up the particle filter, we ...
+
+Evidently, the mean can be written as
+\begin{align*}
+\mu_{T} := T m_T = \sum_{t=1}^{T} m_t = \mu_{T-1} + m_T \quad \Rightarrow \quad m_T = \frac{\mu_{T-1} + m_T}{T}
+\end{align*}
+
+The estimator for the autocovariance of length $\tau$ is
+\begin{align*}
+\widehat\gamma_T(\tau) = \frac{1}{T} \sum_{t=1+\tau}^{T}(x_t - \mu)(x_{t-\tau}-\mu)'
+\end{align*}
+This is biased (should devide by $T-\tau$), but its variance is smaller than that of the unbiased.
+\begin{align*}
+T\widehat\gamma_T(\tau) &= \sum_{t=1+\tau}^{T}x_t x'_{t-\tau} - \sum_{t=1+\tau}^{T} (x_t\mu' + \mu x'_{t-\tau}) + \sum_{t=1+\tau}^{T}\mu\mu' = \\
+&= \sum_{t=1+\tau}^{T}x_t x'_{t-\tau} - 2T\mu\mu' + (T-\tau)\mu\mu' + (x_1 + \dots + x_{1+\tau-1})\mu' + \mu(x_{T-\tau + 1} + \dots + x_T)' \\
+&= \underbrace{\sum_{t=1+\tau}^{T}x_t x'_{t-\tau}}_{:= R_T(\tau)} - (T+\tau)\mu\mu' + (x_1 + \dots + x_{1+\tau-1})\mu' + \mu(x_{T-\tau + 1} + \dots + x_T)' 
+\end{align*}
+The covariance matrix follows from this formula with $\tau=0$
+\begin{align*}
+ R_T(0) &= R_{T-1}(0) - T \mu_T\mu_T' \quad \Rightarrow \quad \widehat{\gamma}_T(0)= \frac{R_{T-1}(0)}{T} - \mu_T\mu_T'
+\end{align*}
+Using these recursions we can compute $\mu_T, R_T(0), R_T(\tau)$ from $\mu_{T-1}, R_{T-1}(0), R_{T-1}(\tau)$.
+
 
 \pagebreak
+
 
 \section*{The \texttt{base\_model/initialize/main.cpp} file }
 

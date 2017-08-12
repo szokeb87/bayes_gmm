@@ -31,24 +31,19 @@ class model {
         scl::realmat                    lambda_0;
         scl::realmat                    lambda_y;
         scl::realmat                    lambda_x;
-        REAL                            delta_0;
-        scl::realmat                    delta_y;
-        REAL                            delta_x;
 
         moments*                        moment_cond;      // pointer to moments class
         scl::gmm*                       gmm_objfun;       // pointer to scl::gmm class
 
 
     public:
-                      model(){ default_params(A_y, C_y, rho, sigma, lambda_0, lambda_y,
-                                              lambda_x, delta_0, delta_y, delta_x); }
+                      model(){ default_params(A_y, C_y, rho, sigma, lambda_0, lambda_y, lambda_x); }
 
                       model(moments* mfptr, scl::gmm* gmmptr){
-                               default_params(A_y, C_y, rho, sigma, lambda_0, lambda_y,
-                                                          lambda_x, delta_0, delta_y, delta_x);
-                                moment_cond = mfptr;
-                                gmm_objfun = gmmptr;
-                                gmm_objfun->set_moment_cond(moment_cond); }
+                               default_params(A_y, C_y, rho, sigma, lambda_0, lambda_y, lambda_x);
+                               moment_cond = mfptr;
+                               gmm_objfun = gmmptr;
+                               gmm_objfun->set_moment_cond(moment_cond); }
 
         void          set_theta(const scl::realmat& theta);
         scl::realmat  get_theta() const;

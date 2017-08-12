@@ -1,0 +1,79 @@
+
+======================================================
+
+The InputParamFile used for these calculations
+
+======================================================
+
+                         values
+M                            10
+N                          1000
+ask_print                     1
+datafilename           data.dat
+draw_from_prior               0
+iseed                  17411332
+lag_hac                       0
+lag_hac_gmm                   0
+lag_obs_factor                1
+len_model_func                1
+len_model_param              10
+len_simul                     2
+model_paramfile        __none__
+no_sandwich                   1
+num_mcmc_draws            15000
+num_mcmc_files                9
+numb_obs_factor               1
+numb_returns                  8
+particle_update              30
+project_name                sdf
+proposal_scale_factor       1.2
+proposaltype                  0
+sample_size                 202
+temperature                   1
+thin                         20
+var_cols                      1
+version                       1
+
+
+
+======================================================
+
+Summary statistics for the parameters 
+
+======================================================
+
+The log posterior (log prior - log likelihood) at the mode is     -11.418.
+
+  params  starting_value  active  rank  proposal_scale  thetamode   thetamean     sehess
+0    A11         0.14847     1.0     1          0.2000    0.16874    0.022335    0.39246
+1    C11         0.04604     1.0     2          0.0010   0.045247     0.12541     0.1776
+8    rho         0.70000     1.0     3          0.2000   -0.98524   -0.032138    0.69248
+9  sigma         0.01000     1.0     4          0.0025  0.0027895  0.00072257  0.0063393
+2   l_01         0.05000     0.0     5          0.0075       0.05        0.05          0
+3   l_02         0.03000     0.0     6          0.0045       0.03        0.03          0
+6   l_y1         0.60000     0.0     7          0.0900        0.6         0.6          0
+7   l_y2        -0.10000     0.0     8          0.0150       -0.1        -0.1          0
+4   l_x1         0.00000     0.0     9          0.0600          0           0          0
+5   l_x2         0.40000     0.0    10          0.0600        0.4         0.4          0
+
+
+
+======================================================
+
+Rejection table calculated from the entire sample
+
+======================================================
+
+        rejection_rate  freq_move  numb_rejection  numb_moves
+params                                                       
+A11           0.391964   0.248867         14632.0     37330.0
+C11           0.596902   0.247913         22197.0     37187.0
+rho           0.340491   0.251167         12828.0     37675.0
+sigma         0.982887   0.252053         37161.0     37808.0
+l_01          0.000000   0.000000             0.0         0.0
+Total         0.000000   0.000000             0.0         0.0
+l_02          0.000000   0.000000             0.0         0.0
+l_y1          0.000000   0.000000             0.0         0.0
+l_y2          0.000000   0.000000             0.0         0.0
+l_x1          0.000000   0.000000             0.0         0.0
+l_x2          0.000000   0.000000             0.0         0.0

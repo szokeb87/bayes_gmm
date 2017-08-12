@@ -1,9 +1,21 @@
-\begin{thebibliography}{1}
+\begin{thebibliography}{3}
 \providecommand{\natexlab}[1]{#1}
 \providecommand{\url}[1]{\texttt{#1}}
 \expandafter\ifx\csname urlstyle\endcsname\relax
   \providecommand{\doi}[1]{doi: #1}\else
   \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Andrieu et~al.(2010)Andrieu, Doucet, and Holenstein]{ADH_2010}
+Christophe Andrieu, Arnaud Doucet, and Roman Holenstein.
+\newblock Particle markov chain monte carlo methods.
+\newblock \emph{Journal of the Royal Statistical Society: Series B (Statistical
+  Methodology)}, 72\penalty0 (3):\penalty0 269--342, 2010.
+
+\bibitem[Chernozhukov and Hong(2003)]{ChernozhukovHong_2003}
+Victor Chernozhukov and Han Hong.
+\newblock An mcmc approach to classical estimation.
+\newblock \emph{Journal of Econometrics}, 115\penalty0 (2):\penalty0 293 --
+  346, 2003.
 
 \bibitem[Gallant et~al.(2017)Gallant, Giacomini, and Ragusa]{GGR_2017}
 A.~Ronald Gallant, Raffaella Giacomini, and Giuseppe Ragusa.

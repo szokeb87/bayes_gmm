@@ -214,7 +214,7 @@ int main(int argc, char** argp, char** envp){
 
         for (INTEGER ifile = 0; ifile <= est_blk.num_mcmc_files; ++ifile) {
             timer.reset();
-            cout << "This is the " << ifile + 1 << "th mcmc file from " << est_blk.num_mcmc_files + 1 << '\n';
+            cout << "This is the " << ifile + 1 << "th mcmc file out of " << est_blk.num_mcmc_files + 1 << '\n';
             /*-----------------------------------------------------------------
               The mcmc:draw() function comunicates with PF in usermodel.likelihood()
                 - upon new proposal mcmc class tells usermodel the new and old theta's
