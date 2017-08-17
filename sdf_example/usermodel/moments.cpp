@@ -160,7 +160,7 @@ realmat moments::operator() (INTEGER t){
     //------------------------------------------------------------
     REAL Xres = (*particle)[t] - rho*(*particle)[t-1];
     *mt_iter++ = Xres * (*particle)[t-1];
-    *mt_iter++ = pow(Xres, 2) - pow(sigma, 2);
+    *mt_iter++ = pow(sigma, 2) - pow(Xres, 2);
 
     //------------------------------------------------------------
     // Condition 5+ (Euler equations)

@@ -13,14 +13,14 @@ datafilename           data.dat
 draw_from_prior               0
 iseed                  17411332
 lag_hac                       0
-lag_hac_gmm                   1
+lag_hac_gmm                   0
 lag_obs_factor                1
 len_model_func                1
 len_model_param              10
 len_simul                     2
 model_paramfile        __none__
 no_sandwich                   1
-num_mcmc_draws              500
+num_mcmc_draws             5000
 num_mcmc_files                9
 numb_obs_factor               1
 numb_returns                  8
@@ -42,19 +42,19 @@ Summary statistics for the parameters
 
 ======================================================
 
-The log posterior (log prior - log likelihood) at the mode is     -11.314.
+The log posterior (log prior - log likelihood) at the mode is     -11.487.
 
-  params  starting_value  active  rank  proposal_scale  thetamode thetamean    sehess
-0    A11         0.14847     1.0     1          0.2000     0.1562  -0.16945   0.50882
-1    C11         0.04604     1.0     2          0.0099   0.045642  0.081392  0.057036
-8    rho         0.70000     1.0     3          0.2000    0.30562   0.77307   0.29699
-9  sigma         0.01000     1.0     4          0.0099  0.0037198  0.023235  0.032622
-2   l_01         0.05000     0.0     5          0.0075       0.05      0.05         0
-3   l_02         0.03000     0.0     6          0.0045       0.03      0.03         0
-6   l_y1         0.60000     0.0     7          0.0900        0.6       0.6         0
-7   l_y2        -0.10000     0.0     8          0.0150       -0.1      -0.1         0
-4   l_x1         0.00000     0.0     9          0.0600          0         0         0
-5   l_x2         0.40000     0.0    10          0.0600        0.4       0.4         0
+  params  starting_value  active  rank  proposal_scale  thetamode  thetamean    sehess
+0    A11         0.14847     1.0     1           0.300   -0.98614  0.0003923   0.57644
+1    C11         0.04604     1.0     2           0.030   0.070229     1.1372   0.94697
+8    rho         0.70000     1.0     3           0.350      0.842   0.015466   0.59253
+9  sigma         0.01000     1.0     4           0.030  0.0051891   0.040232  0.086061
+2   l_01         0.05000     1.0     5           0.250    -3.5103    -2.4773    9.9606
+3   l_02         0.03000     1.0     6           0.250     2.4684     10.556    5.6911
+6   l_y1         0.60000     0.0     7           0.090        0.6        0.6         0
+7   l_y2        -0.10000     0.0     8           0.015       -0.1       -0.1         0
+4   l_x1         0.00000     0.0     9           0.060          0          0         0
+5   l_x2         0.40000     0.0    10           0.060        0.4        0.4         0
 
 
 
@@ -66,14 +66,14 @@ Rejection table calculated from the entire sample
 
         rejection_rate  freq_move  numb_rejection  numb_moves
 params                                                       
-A11           0.287097     0.2480           356.0      1240.0
-C11           0.370719     0.2336           433.0      1168.0
-rho           0.723125     0.2586           935.0      1293.0
-sigma         0.635874     0.2598           826.0      1299.0
-l_01          0.000000     0.0000             0.0         0.0
-Total         0.000000     0.0000             0.0         0.0
-l_02          0.000000     0.0000             0.0         0.0
-l_y1          0.000000     0.0000             0.0         0.0
-l_y2          0.000000     0.0000             0.0         0.0
-l_x1          0.000000     0.0000             0.0         0.0
-l_x2          0.000000     0.0000             0.0         0.0
+A11           0.154023    0.16504          1271.0      8252.0
+C11           0.129939    0.16500          1072.0      8250.0
+rho           0.232653    0.16170          1881.0      8085.0
+sigma         0.716461    0.16816          6024.0      8408.0
+l_01          0.014946    0.16994           127.0      8497.0
+Total         0.014946    0.16994           127.0      8497.0
+l_02          0.015750    0.17016           134.0      8508.0
+l_y1          0.000000    0.00000             0.0         0.0
+l_y2          0.000000    0.00000             0.0         0.0
+l_x1          0.000000    0.00000             0.0         0.0
+l_x2          0.000000    0.00000             0.0         0.0

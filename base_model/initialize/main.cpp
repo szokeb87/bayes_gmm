@@ -203,7 +203,7 @@ int main(int argc, char** argp, char** envp){
         //========================================================================
 
         INT_32BIT seed = est_blk.seed;
-        realmat theta = specification.get_theta();
+        realmat theta = specification.get_theta_start();
 
         realmat theta_sim;
         realmat stats_sim;

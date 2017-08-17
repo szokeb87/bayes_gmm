@@ -211,10 +211,10 @@ namespace {
 // initialize::specification_class members
 //==================================================================================
 
-void initialize::specification_class::set_theta(const realmat& theta_new){
-    if (theta.get_rows() != theta_new.get_rows() || theta.get_cols() != theta_new.get_cols() ) {
-        theta = theta_new; }
-    else { error("Error, specification_class, set_theta, bad input"); }
+void initialize::specification_class::set_theta_start(const realmat& theta_new){
+    if (theta_start.get_rows() != theta_new.get_rows() || theta_start.get_cols() != theta_new.get_cols() ) {
+        theta_start = theta_new; }
+    else { error("Error, specification_class, set_theta_start, bad input"); }
 }
 
 
@@ -480,8 +480,8 @@ bool initialize::specification_class::set_params(const vector<string>& paramfile
         detail.flush();
     }
 
-    theta.resize(model_blk.len_model_param, 1);
-    theta_fixed.resize(theta.size());              // store 2nd col of PARAM START VALUES
+    theta_start.resize(model_blk.len_model_param, 1);
+    theta_fixed.resize(theta_start.size());        // store 2nd col of PARAM START VALUES
                                                    // determining whether a parameter is fixed
                                                   // or active. proposal never moves fixed
     INTEGER nfixed = 0;                           // number of fixed params
@@ -494,12 +494,12 @@ bool initialize::specification_class::set_params(const vector<string>& paramfile
 
     header = kw.set_keyword("PARAMETER START VALUES");   //required
     line_ptr = find_if(paramfile_lines.begin(), paramfile_lines.end(), kw);
-    if (line_ptr + theta.size() >= paramfile_lines.end()) error("Error, specification_class, " + header);
+    if (line_ptr + theta_start.size() >= paramfile_lines.end()) error("Error, specification_class, " + header);
 
-    for (INTEGER i=1; i<=theta.size(); ++i) {
+    for (INTEGER i=1; i<=theta_start.size(); ++i) {
         // going through the lines
         pair<string, string> ss = find_ss((++line_ptr)->c_str());
-        theta[i] = atof(ss.first.c_str());
+        theta_start[i] = atof(ss.first.c_str());
         theta_fixed[i] = atoi(ss.second.c_str());
 
         if (theta_fixed[i] == 0) ++nfixed;
@@ -511,17 +511,17 @@ bool initialize::specification_class::set_params(const vector<string>& paramfile
         param_start_rhs.push_back(line);
     }
 
-    INTEGER nactive = theta.size() - nfixed;      // number of active params
+    INTEGER nactive = theta_start.size() - nfixed;      // number of active params
 
     // construct the fixed and active intvec's from the theta_fixed vector
     intvec fixed;
-    intvec active = seq(1, theta.size());
+    intvec active = seq(1, theta_start.size());
     if (nfixed>0) {
         fixed.resize(nfixed);
         active.resize(nactive);
         INTEGER j=0;
         INTEGER k=0;
-        for (INTEGER i=1; i<=theta.size(); ++i) {
+        for (INTEGER i=1; i<=theta_start.size(); ++i) {
             if (theta_fixed[i] == 0) { fixed[++j] = i; }
             else { active[++k] = i; }
         }
@@ -532,8 +532,8 @@ bool initialize::specification_class::set_params(const vector<string>& paramfile
     //--------------------------------------------------------------
     if (est_blk.ask_print) {
         detail << '\n' << header << '\n';
-        detail << "\n\t theta = ";
-        detail << theta;
+        detail << "\n\t theta_start = ";
+        detail << theta_start;
         detail << "\n\t theta_fixed = ";
         detail << theta_fixed << '\n';
         detail << "\t Number fixed = " << nfixed << '\n';
@@ -552,15 +552,15 @@ bool initialize::specification_class::set_params(const vector<string>& paramfile
     // PROPOSAL SCALING header,
     //===================================================================
 
-    theta_increment.resize(theta.size(), 1);
-    proposal_scale.resize(theta.size(), 1);
+    theta_increment.resize(theta_start.size(), 1);
+    proposal_scale.resize(theta_start.size(), 1);
 
     header = kw.set_keyword("PROPOSAL SCALING");   //required
     line_ptr = find_if(paramfile_lines.begin(), paramfile_lines.end(), kw);
 
-    if (line_ptr + theta.size() >= paramfile_lines.end()) error("Error, specification_class, " + header);
+    if (line_ptr + theta_start.size() >= paramfile_lines.end()) error("Error, specification_class, " + header);
 
-    for (INTEGER i=1; i<=theta.size(); ++i) {
+    for (INTEGER i=1; i<=theta_start.size(); ++i) {
         proposal_scale[i] = atof((++line_ptr)->c_str());
         // apply proposal_scale_factor from ESTIMATION DESCRIPTION
         proposal_scale[i] *= est_blk.proposal_scale_factor;
@@ -591,7 +591,7 @@ bool initialize::specification_class::set_params(const vector<string>& paramfile
         realmat Vfixed(nfixed, nfixed, 0.0);
         for (INTEGER i=1; i<=nfixed; ++i) {
             ifixed[i] = theta_increment[fixed[i]];
-            ufixed[i] = theta[fixed[i]];
+            ufixed[i] = theta_start[fixed[i]];
             Vfixed(i, i) = pow(proposal_scale[fixed[i]], 2);
         }
 
@@ -612,10 +612,10 @@ bool initialize::specification_class::set_params(const vector<string>& paramfile
 
     if (line_ptr != paramfile_lines.end()) {
         INTEGER count = 0;
-        while (count < theta.size()) {
-            INTEGER top = theta.size();
+        while (count < theta_start.size()) {
+            INTEGER top = theta_start.size();
             INTEGER r = 1;                  // row of gmat
-            realmat gmat(theta.size() + 1, theta.size() + 1, 0.0);
+            realmat gmat(theta_start.size() + 1, theta_start.size() + 1, 0.0);
             while (r <= top) {
                 ++line_ptr;
                 grouptxt.push_back(*line_ptr);    // collect lines in vec
@@ -627,7 +627,7 @@ bool initialize::specification_class::set_params(const vector<string>& paramfile
                 INTEGER lim = line_ptr->size();
                 while(lim > 0 && isspace((*line_ptr)[lim-1])) --lim;
 
-                while (j < lim && c <= theta.size()) {
+                while (j < lim && c <= theta_start.size()) {
                     // determine first non-white space index = j
                     while (j < lim && isspace((*line_ptr)[j])) ++j;
                     // determine length of non-white space
@@ -664,7 +664,7 @@ bool initialize::specification_class::set_params(const vector<string>& paramfile
                 for (INTEGER i=1; i<=group_index_vec.size(); ++i) {
                     group_index_vec[i] = INTEGER(rvec[i]);
                     group_increment[i] = theta_increment[group_index_vec[i]];
-                    proposal_mean[i] = theta[group_index_vec[i]];  }
+                    proposal_mean[i] = theta_start[group_index_vec[i]];  }
 
                 for (INTEGER j=1; j<=group_index_vec.size(); ++j) {
                     for (INTEGER i=1; i<=group_index_vec.size(); ++i) {
@@ -682,7 +682,7 @@ bool initialize::specification_class::set_params(const vector<string>& paramfile
         for (INTEGER i=1; i<=nactive; ++i) {
             intvec group_index_vec(1, active[i]);
             REAL proposal_cov = pow(proposal_scale[active[i]], 2);
-            REAL proposal_mean = theta[active[i]];
+            REAL proposal_mean = theta_start[active[i]];
             REAL group_increment = theta_increment[active[i]];
 
             // proposal_group is from estimator_base.h :
@@ -699,7 +699,7 @@ bool initialize::specification_class::set_params(const vector<string>& paramfile
         detail << starbox("/Prop groups//") << '\n';
         detail << "\t\t Constructed from " << header << ", if present; \n";
         detail << "\t\t If not, move one at a time grouping is used.\n";
-        detail << "\t\t If theta has fixed elements, they are in Group 0\n";
+        detail << "\t\t If theta_start has fixed elements, they are in Group 0\n";
         detail << "\t\t and not changed during the MCMC iterations.\n";
         detail << "\t\t " << header << " correlations have been converted\n";
         detail << "\t\t to variances using the proposal_scale vector above.\n";

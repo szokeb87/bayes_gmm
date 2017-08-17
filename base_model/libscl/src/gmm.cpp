@@ -243,7 +243,6 @@ gmm::gmm(moment_function_base* moment_cond_ptr, const realmat* data_ptr, INTEGER
          moment_cond(moment_cond_ptr), data_ptr(data_ptr), len_history(n), lag_hac_gmm(lag_hac_gmm),
          correct_for_mean(true), regularize_W(false), ridge(0.0), warning_messages(true){
 
-    //if (lag_hac_gmm > 1) correct_for_mean = false;
     bool dat = moment_cond->set_data(data_ptr);
     bool ssz = moment_cond->set_len_history(len_history);
     if ( !(dat && ssz) ) { error("Error, gmm, constructor, cannot configure moment function"); }
@@ -453,6 +452,7 @@ REAL gmm::operator()(const realmat& theta, realmat& mu, vector<realmat>& R,
                 S += Ru;
             }
             else {                      // if lag > 0
+              
                 if (n>=T0+lag){         // each R[lag] starts from t=T0+lag, otherwise 0
                 realmat mtlag = (*moment_cond)(n-lag); R[lag] += mt*T(mtlag);
                 realmat adj_before(d, 1, 0.0); realmat adj_after(d, 1, 0.0);

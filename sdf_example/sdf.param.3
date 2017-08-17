@@ -6,7 +6,7 @@ ESTIMATION DESCRIPTION (required)
            0   Proposal type, 0 group_move, 1 cond_move, 2 usr, proposaltype, int
            1   Write detailed output if ask_print=1, ask_print, int
     17411332   Seed for MCMC draws, iseed, int
-       15000   Number of MCMC draws per output file, num_mcmc_draws, int
+       50000   Number of MCMC draws per output file, num_mcmc_draws, int
            9   Number of MCMC output files beyond the first, num_mcmc_files, int
          1.2   Rescale prop scale block by this, proposal_scale_factor, float
          1.0   Rescale posterior by this val, temperature, float
@@ -28,7 +28,7 @@ __none__       File name, use __none__ if none, model_paramfile, string
            1   Number of observable risk factors, numb_obs_factor, int
            1   Lags for observable risk factors, lag_obs_factor, int
            8   Number of log returns, numb_returns, int
-           2   Lags for HAC variance estimator (GMM objfun), lag_hac_gmm, int
+           0   Lags for HAC variance estimator (GMM objfun), lag_hac_gmm, int
         1000   Number of particles, N, int
            2   Simulation size, len_simul, int
           30   Draws between particle filter updates, particle_update, int
@@ -45,10 +45,10 @@ PARAMETER START VALUES (required)
    0.0                        0         9  l_x1
    0.4                        0        10  l_x2
 PROPOSAL SCALING (required)
-   2.00000000000000000e-01              1  A11
-   9.90000000000000000e-03              2  C11
-   2.00000000000000000e-01              3  rho
-   9.90000000000000000e-03              4  sigma
+   1.06000000000000000e-01              1  A11
+   1.25000000000000000e-03              2  C11
+   1.05500000000000000e-01              3  rho
+   1.20000000000000000e-03              4  sigma
    7.50000000000000000e-03              5  l_01
    4.50000000000000000e-03              6  l_02
    9.00000000000000000e-02              7  l_y1

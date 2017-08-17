@@ -293,31 +293,36 @@ file \texttt{***.detail.dat}, presuming \texttt{ask\_print=1} in the ESTIMATION 
 
 \section{How to define your own model}
 
+The most important class that must be written by the user is the \texttt{usermodel\_class}, the main task of which is to evaluate the model's likelihood function. It must be inherited from \texttt{estimator::usermodel\_base}. 
 
-\subsection{The \texttt{usermodel\_class}}
+\subsection{The \texttt{usermodel\_class} for gmm based likelihood approximation}
 
 The class is declared in \texttt{usermodel/usermodel.h} and defined in \texttt{usermodel/usermodel.cpp}. Most importantly, it has three key linked private members: these are pointers to (1) a \texttt{moments} class, (2) a \texttt{scl::gmm} class, and (3) a \texttt{model} class\footnote{Defined in this order(!) using the previously defined objects, i.e. \texttt{scl::gmm} is defined using \texttt{moments} and \texttt{model} is defined using \texttt{moments} and \texttt{scl::gmm}.}
 
 \begin{description}
-\item[\texttt{model} class]: 
 
+\item[\texttt{moments} class]: evaluates the moment conditions $m(y_t, x_t, \theta)$ (for a specific period t) given \texttt{theta} and the \texttt{data} (and the \texttt{particle} in case of latent variables). The class must be inherited from \texttt{scl::moment\_function\_base} (that has ``compulsory'' methods)
+
+\item[\texttt{scl::gmm} class]: defined in \texttt{base\_model/libscl/}
 \begin{itemize}
-\item its likelihood member calculates the value of the GMM representation of the measurement density evaluated at the data $y_t$ for given $t\leq$ \texttt{sample\_size} and a given set of particles. For this step, it first \texttt{set\_particle} and \texttt{set\_sample\_size}(t) of the \texttt{moments} class, then calls \texttt{scl::gmm} for the current \texttt{theta} value. 
-\item it has two members that \texttt{draw\_x0()} and \texttt{draw\_xt(xlag)} (latent variable) and a wrapper \texttt{prop\_yt(t, particle)} for the likelihood which are called by the particle filter 
-\end{itemize}
-\item[\texttt{moments} class]: evaluates the moment conditions $g_t(\theta, y_t, x_t)$ (for a given period t) given \texttt{theta}, the \texttt{data}, and the \texttt{particle}. It inherits the \texttt{scl::moment\_function\_base} and provides a way to specify the moment conditions.
-\item[\texttt{scl::gmm} class]:
- 
-\begin{itemize}
-\item it returns $g_n'S_n^{-1} g_n$ where $g_n = \frac{1}{n}\sum_{T_{\min}}^{n} g_t(\theta, y_t, x_t)$ and $T_{\min}\leq n\leq$\texttt{sample\_size} and $S_n$ is 
+\item returns $m_n'S_n^{-1} m_n$ where $m_n := \frac{\sum_{t=T_{\min}}^{n} m(y_t, x_t, \theta)}{n-T_{min}+1}$, $T_{\min}\leq n\leq$\texttt{sample\_size} and $S_n$ is 
 \begin{itemize}
 \item calculated from centered sample moments if \texttt{correct\_for\_mean==true}
-\item if \texttt{regularize\_W==true}, it is regularized  with parameter\texttt{ridge} to make the inverse well conditioned
-\item HAC corrected if \texttt{lag\_hac\_gmm>0}
+\item if \texttt{regularize\_W==true}, it is regularized with parameter \texttt{ridge} (make it well-conditioned)
+\item HAC corrected (Parzen weights) if \texttt{lag\_hac\_gmm>0}
 \end{itemize}
-\item its \texttt{set\_*()} methods are expected to update the \texttt{moments} class as well. 
+\item should be initialized with a \texttt{moments} class private member ($T_{\min}$ must be specified as an outcome of the \texttt{moments.get\_minT()} method  
 %\item \texttt{logdetW} is the Jacobian of g with respect to theta???
 \end{itemize}
+\item[\texttt{model} class]: helps to calculate the GMM representation of the likelihood
+
+\begin{itemize}
+\item The private members are the ``individual'' model parameters
+\item \texttt{likelihood(t)} method calculates the value of the GMM representation evaluated at the data $y_t$ through period $t$, where  $T_{\min}\leq t$ \texttt{sample\_size} (and possibly given the particles). First, it \texttt{set\_particle()} and \texttt{set\_sample\_size}(t) of the \texttt{moments} class, then calls \texttt{scl::gmm} for the current \texttt{theta} value. 
+\item Latent variable: two members \texttt{draw\_x0()} and \texttt{draw\_xt(xlag)} and a wrapper \texttt{prop\_yt(t, particle)} that are called by the particle filter 
+\end{itemize}
+
+
 \end{description}
 
 Moreover, corresponding to the particle filter, it has \texttt{scl::realmat} members
@@ -359,6 +364,9 @@ As for the methods, there are three important ones
 \end{itemize}
 
 \end{enumerate} 
+
+\subsection{The \texttt{usermodel\_class} for known (exact) likelihood function}
+
 
 \pagebreak
 
@@ -843,27 +851,17 @@ usermodel.write\_usrvar(filename.c\_str());}
 \pagebreak
 
 
-
-TODO
-
-
-\pagebreak 
-
 \section*{Notes}
 
 \begin{itemize}
-\item Both specification class and usermodel class have theta member
-\begin{itemize}
-\item During the mcmc sampling: only the usermodel's theta private member gets updated (both theta and theta\_old) and while it calls usermodel.likelihood(), usermodel automatically updates *\_model and *\_moments classes as well
-\item The specification class's theta on the other hand does not get updated, so it is always stays at the start values of theta (could rename actually)
+\item Usermodel class have theta and theta\_old member. During the mcmc sampling, thest private members get updated. Calling usermodel.likelihood(), usermodel automatically updates *\_model and *\_moments classes as well
 \end{itemize}
 
-\item Both mcmc class and asymptotics class have posterior\_mode and posterior\_maxval members
+Both mcmc class and asymptotics class have posterior\_mode and posterior\_maxval members
 \begin{itemize}
 \item mcmc versions get updated just before the acceptance/rejection step 
 \item temperature for posterior affects the acceptance/rejection step 
 \item after \texttt{num\_mcmc\_draws} many draws the mcmc versions are passed to asymptotics $=>$ \texttt{theta\_mode} and \texttt{posterior\_high} get updated in asymptotics along with the cumulative mean theta and cov $=>$ everything gets written into summary.dat files 
-\end{itemize}
 \end{itemize}
 
 

@@ -115,7 +115,7 @@ class specification_class {
         datablock                         data_blk;           // DATA DESCRIPTION block
         modelblock                        model_blk;          // MODEL DESCRIPTION block
 
-        scl::realmat                      theta;              // parameter of the model
+        scl::realmat                      theta_start;        // parameter of the model (starting value)
         scl::intvec                       theta_fixed;        // 0/1 vector for fixed params
         scl::realmat                      theta_increment;    //
         scl::realmat                      proposal_scale;     // PROPOSAL SCALING block: proposal stdev
@@ -145,14 +145,14 @@ class specification_class {
                                                           const scl::realmat& sig) const;
 
         void                                  set_estblock(const estblock& eb);
-        void                                  set_theta(const scl::realmat& r);
+        void                                  set_theta_start(const scl::realmat& r);
 
         const estblock&                       get_estblock() const {return est_blk;}
         const datablock&                      get_datablock() const {return data_blk;}
         const modelblock&                     get_modelblock() const {return model_blk;}
 
         const std::vector<std::string>        get_model_addlines() const {return model_addlines;}
-        const scl::realmat&                   get_theta() const {return theta;}
+        const scl::realmat&                   get_theta_start() const {return theta_start;}
         const scl::intvec&                    get_theta_fixed() const {return theta_fixed;}
         const scl::realmat&                   get_theta_increment() const {return theta_increment;}
         const scl::realmat&                   get_proposal_scale() const {return proposal_scale;}

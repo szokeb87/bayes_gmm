@@ -11,7 +11,8 @@
 \BOOKMARK [2][-]{subsection.2.7}{PROPOSAL SCALING}{section.2}% 11
 \BOOKMARK [2][-]{subsection.2.8}{PROPOSAL GROUPING}{section.2}% 12
 \BOOKMARK [1][-]{section.3}{How to define your own model}{}% 13
-\BOOKMARK [2][-]{subsection.3.1}{The usermodel\137class}{section.3}% 14
-\BOOKMARK [1][-]{section.4}{Example: the sdf usermodel}{}% 15
-\BOOKMARK [2][-]{subsection.4.1}{Structure of data.dat}{section.4}% 16
-\BOOKMARK [2][-]{subsection.4.2}{Sampler}{section.4}% 17
+\BOOKMARK [2][-]{subsection.3.1}{The usermodel\137class for gmm based likelihood approximation}{section.3}% 14
+\BOOKMARK [2][-]{subsection.3.2}{The usermodel\137class for known \(exact\) likelihood function}{section.3}% 15
+\BOOKMARK [1][-]{section.4}{Example: the sdf usermodel}{}% 16
+\BOOKMARK [2][-]{subsection.4.1}{Structure of data.dat}{section.4}% 17
+\BOOKMARK [2][-]{subsection.4.2}{Sampler}{section.4}% 18

@@ -292,7 +292,7 @@ namespace initialize {
           model_instance->set_theta(theta_old);
 
           gibbs_draws.push_back(theta_old);
-          INTEGER T0 = moment_cond->get_minT();
+          INTEGER T0 = moment_cond->get_minT() + lag_hac_gmm;
           INTEGER d = moment_cond->get_dim();
 
           REAL weights[N];  //REAL weights_ancestor[N];
@@ -325,7 +325,7 @@ namespace initialize {
 
 
           //--------------------------------------------------------------------
-          // (2) Running the particle filter (T0 < t <= sample_size+1)
+          // (2) Running the particle filter (T0 < t <= sample_size)
           //--------------------------------------------------------------------
 
           for (INTEGER t=T0; t<=sample_size; ++t) {
