@@ -1,0 +1,81 @@
+PARAMFILE HISTORY (optional)
+#
+# This paramfile was written by bayes_gmm 1.0 using the following line from
+# control.dat, which was read as char*, char*
+# ---------------------------------------------------------------------------
+#       sdf.param.000                 sdf
+# ---------------------------------------------------------------------------
+#
+ESTIMATION DESCRIPTION (required)
+         sdf   Project name, project_name, char*
+         1.0   bayes_gmm version, version, float
+           0   Proposal type, 0 group_move, 1 cond_move, 2 usr, proposaltype, int
+           1   Write detailed output if ask_print=1, ask_print, int
+     3463332   Seed for MCMC draws, iseed, int
+        5000   Number of MCMC draws per output file, num_mcmc_draws, int
+           9   Number of MCMC output files beyond the first, num_mcmc_files, int
+         1.0   Rescale prop scale block by this, proposal_scale_factor, float
+         1.0   Rescale posterior by this val, temperature, float
+           1   Sandwich variance not computed if no_sandwich=1, no_sandwich, int
+           0   Number of lags in HAC middle of sandwich variance, lag_hac, int
+          10   The thinning parameter used to write MCMC draws, thin, int
+           0   Draw from prior if draw_from_prior=1, draw_from_prior, int
+DATA DESCRIPTION (required) (model constructor sees realmat data(M,sample_size))
+          10   Dimension of the data, M, int
+         200   Number of observations, sample_size, int
+data.dat       File name, any length, no embedded blanks, datafilename, string
+1:10           Read these white space separated var_cols, var_cols, intvec
+MODEL DESCRIPTION (required)
+          10   Number of model parameters, len_model_param, int
+           1   Number of model functionals, len_model_func, int
+MODEL PARAMFILE (required) (goes to usermodel as model_addlines)
+__none__       File name, use __none__ if none, model_paramfile, string
+#begin additional lines
+           1   Number of observable risk factors, numb_obs_factor, int
+           1   Lags for observable risk factors, lag_obs_factor, int
+           8   Number of log returns, numb_returns, int
+           0   Lags for HAC variance estimator (GMM objfun), lag_hac_gmm, int
+         500   Number of particles, N, int
+         100   Simulation size, len_simul, int
+          50   Draws between particle filter updates, particle_update, int
+#end additional lines
+PARAMETER START VALUES (required)
+   2.54534949095299057e-01    1         1  A11
+   4.22016375517030515e-02    1         2  C11
+   2.68123359988080123e-01    1         3  rho
+   8.64425688143293305e-03    1         4  sigma
+   7.05574807235731516e-02    1         5  l_01
+  -4.32970809912238574e-01    1         6  l_02
+   2.30416239488306607e+00    1         7  l_y1
+  -6.99548806863769190e-01    1         8  l_y2
+   1.51742897357848827e+00    1         9  l_x1
+  -8.76806944312851000e-01    1        10  l_x2
+PROPOSAL SCALING (required)
+   3.52499999999999966e-03              1  A11
+   8.12500000000000013e-04              2  C11
+   1.52499999999999986e-02              3  rho
+   1.12500000000000057e-04              4  sigma
+   4.52499999999999951e-03              5  l_01
+   3.52499999999999992e-03              6  l_02
+   5.12499999999999969e-02              7  l_y1
+   6.12500000000000024e-03              8  l_y2
+   6.12499999999999989e-02              9  l_x1
+   6.12499999999999989e-02             10  l_x2
+PROPOSAL GROUPING (optional) (frequencies are relative)
+0.1     1     2     3     4
+  1   1.0  -0.9  -0.4   0.8
+  2  -0.9   1.0   0.4  -0.9
+  3  -0.4   0.4   1.0  -0.2
+  4   0.8  -0.9  -0.2   1.0
+0.1     5
+  5   1.0
+0.1     6
+  6   1.0
+0.1     7
+  7   1.0
+0.1     8
+  8   1.0
+0.1     9
+  9   1.0
+0.1    10
+ 10   1.0

@@ -1,1 +1,1 @@
-#define PATHNAME "/home/szokeb/Dropbox/git_repos/bayes_gmm/sdf_example"
+#define PATHNAME "/Users/juddy/Documents/GitHub/bayes_gmm/sdf_example"
